@@ -57,10 +57,10 @@ jobs:
           HTML_TEMPLATE_FILE: "./pandoc-templates/sidebar-green-template.html"
         run: |
           #!/bin/bash
-          /usr/bin/pandoc ${INPUT_FILE} -t html --pdf-engine=wkhtmltopdf --template="${HTML_TEMPLATE_FILE}" -o ${FILE_PDF} -f ${INPUT_FORMAT}
-          /usr/bin/pandoc ${INPUT_FILE} -s --toc --template="${HTML_TEMPLATE_FILE}" --metadata title="${TITLE}" -o ${FILE_HTML_LIVE} -f ${INPUT_FORMAT}
-          /usr/bin/pandoc ${INPUT_FILE} -t odt --template=./pandoc-templates/default.opendocument -o ${FILE_ODT} -f ${INPUT_FORMAT}
-          /usr/bin/pandoc ${INPUT_FILE} --template=./pandoc-templates/default.ms -o ${FILE_DOCX} -f ${INPUT_FORMAT}
+          /usr/bin/pandoc ${INPUT_FILE} -t html --pdf-engine=wkhtmltopdf --template="${HTML_TEMPLATE_FILE}" -o ${env.FILE_PDF} -f ${INPUT_FORMAT}
+          /usr/bin/pandoc ${INPUT_FILE} -s --toc --template="${HTML_TEMPLATE_FILE}" --metadata title="${TITLE}" -o ${env.FILE_HTML_LIVE} -f ${INPUT_FORMAT}
+          /usr/bin/pandoc ${INPUT_FILE} -t odt --template=./pandoc-templates/default.opendocument -o ${env.FILE_ODT} -f ${INPUT_FORMAT}
+          /usr/bin/pandoc ${INPUT_FILE} --template=./pandoc-templates/default.ms -o ${env.FILE_DOCX} -f ${INPUT_FORMAT}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
