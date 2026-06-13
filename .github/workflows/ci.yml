@@ -20,12 +20,13 @@ env:
   OUTPUT_FOLDER: ./release
   FILE_BASENAME: "_Dmitry_C++_SDE"
   
-  FILE_PDF: '${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.pdf'
-  FILE_ODT: '${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.odt'
-  FILE_DOCX: '${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.docx'
-  FILE_HTML_LIVE: '${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}_live.html'
-
 jobs:
+  env:
+    FILE_PDF: '${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.pdf'
+    FILE_ODT: '${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.odt'
+    FILE_DOCX: '${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.docx'
+    FILE_HTML_LIVE: '${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}_live.html'
+
   build:
     name: Build Resume
     runs-on: ubuntu-latest
