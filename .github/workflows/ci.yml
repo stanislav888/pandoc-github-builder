@@ -51,7 +51,6 @@ jobs:
       FILE_ODT: ${{ needs.setup-file-names.outputs.FILE_ODT }}
       FILE_DOCX: ${{ needs.setup-file-names.outputs.FILE_DOCX }}
       FILE_HTML_LIVE: ${{ needs.setup-file-names.outputs.FILE_HTML_LIVE }}
-      TITLE: ${{ env.FILE_BASENAME }}
 
     steps:
       - name: Checkout repository
@@ -86,7 +85,7 @@ jobs:
             -s \
             --toc \
             --template="${HTML_TEMPLATE_FILE}" \
-            --metadata title="${TITLE}" \
+            --metadata title="${FILE_BASENAME}" \
             -o ${FILE_HTML_LIVE} \
             -f ${INPUT_FORMAT}
 
