@@ -19,17 +19,34 @@ on:
 env:
   OUTPUT_FOLDER: ./release
   FILE_BASENAME: "_Dmitry_C++_SDE"
-  
+
 jobs:
-  env:
-    FILE_PDF: '${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.pdf'
-    FILE_ODT: '${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.odt'
-    FILE_DOCX: '${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.docx'
-    FILE_HTML_LIVE: '${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}_live.html'
+  # Job для генерации имён файлов
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      FILE_PDF: ${{ steps.set-names.outputs.FILE_PDF }}
+      FILE_ODT: ${{ steps.set-names.outputs.FILE_ODT }}
+      FILE_DOCX: ${{ steps.set-names.outputs.FILE_DOCX }}
+      FILE_HTML_LIVE: ${{ steps.set-names.outputs.FILE_HTML_LIVE }}
+    steps:
+      - name: Generate file names
+        id: set-names
+        run: |
+          echo "FILE_PDF=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.pdf" >> $GITHUB_OUTPUT
+          echo "FILE_ODT=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.odt" >> $GITHUB_OUTPUT
+          echo "FILE_DOCX=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.docx" >> $GITHUB_OUTPUT
+          echo "FILE_HTML_LIVE=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}_live.html" >> $GITHUB_OUTPUT
 
   build:
     name: Build Resume
     runs-on: ubuntu-latest
+    needs: setup
+    env:
+      FILE_PDF: ${{ needs.setup.outputs.FILE_PDF }}
+      FILE_ODT: ${{ needs.setup.outputs.FILE_ODT }}
+      FILE_DOCX: ${{ needs.setup.outputs.FILE_DOCX }}
+      FILE_HTML_LIVE: ${{ needs.setup.outputs.FILE_HTML_LIVE }}
 
     steps:
       - name: Checkout repository
@@ -57,10 +74,10 @@ jobs:
           HTML_TEMPLATE_FILE: "./pandoc-templates/sidebar-green-template.html"
         run: |
           #!/bin/bash
-          /usr/bin/pandoc ${INPUT_FILE} -t html --pdf-engine=wkhtmltopdf --template="${HTML_TEMPLATE_FILE}" -o ${env.FILE_PDF} -f ${INPUT_FORMAT}
-          /usr/bin/pandoc ${INPUT_FILE} -s --toc --template="${HTML_TEMPLATE_FILE}" --metadata title="${TITLE}" -o ${env.FILE_HTML_LIVE} -f ${INPUT_FORMAT}
-          /usr/bin/pandoc ${INPUT_FILE} -t odt --template=./pandoc-templates/default.opendocument -o ${env.FILE_ODT} -f ${INPUT_FORMAT}
-          /usr/bin/pandoc ${INPUT_FILE} --template=./pandoc-templates/default.ms -o ${env.FILE_DOCX} -f ${INPUT_FORMAT}
+          /usr/bin/pandoc ${INPUT_FILE} -t html --pdf-engine=wkhtmltopdf --template="${HTML_TEMPLATE_FILE}" -o ${FILE_PDF} -f ${INPUT_FORMAT}
+          /usr/bin/pandoc ${INPUT_FILE} -s --toc --template="${HTML_TEMPLATE_FILE}" --metadata title="${TITLE}" -o ${FILE_HTML_LIVE} -f ${INPUT_FORMAT}
+          /usr/bin/pandoc ${INPUT_FILE} -t odt --template=./pandoc-templates/default.opendocument -o ${FILE_ODT} -f ${INPUT_FORMAT}
+          /usr/bin/pandoc ${INPUT_FILE} --template=./pandoc-templates/default.ms -o ${FILE_DOCX} -f ${INPUT_FORMAT}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -73,7 +90,7 @@ jobs:
   test:
     name: Test generated files
     runs-on: ubuntu-latest
-    needs: build
+    needs: [setup, build]
     if: always()
 
     strategy:
@@ -102,19 +119,19 @@ jobs:
 
       - name: Check ${{ matrix.format.name }} exists
         env:
-          FILE_PATH: ${{ env[matrix.format.var] }}
+          FILE_PATH: ${{ needs.setup.outputs[matrix.format.var] }}
         run: |
           if [ -f "${FILE_PATH}" ]; then
-            echo "✅ ${{ matrix.format.name }} exists: ${FILE_PATH}"
+            echo "✅ ${{ matrix.format.name }} exists"
           else
-            echo "❌ ${{ matrix.format.name }} not found: ${FILE_PATH}"
+            echo "❌ ${{ matrix.format.name }} not found"
             exit 1
           fi
 
       - name: Check ${{ matrix.format.name }} is not empty
         if: ${{ matrix.format.check_size == true }}
         env:
-          FILE_PATH: ${{ env[matrix.format.var] }}
+          FILE_PATH: ${{ needs.setup.outputs.FILE_PDF }}
         run: |
           if [ -s "${FILE_PATH}" ]; then
             echo "✅ ${{ matrix.format.name }} is non-empty"
