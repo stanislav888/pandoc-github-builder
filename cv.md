@@ -1,4 +1,3 @@
-```markdown
 # Dmitry Ivanov
 ## C++ Software Development Engineer
 
