@@ -20,14 +20,11 @@ env:
   OUTPUT_FOLDER: ./release
   FILE_BASENAME: "_Dmitry_C++_SDE"
   
-  # Базовый путь ко всем файлам
-  FILE_PATH: "${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}"
-  
-  # Имена всех выходных файлов
-  FILE_PDF: "${{ env.FILE_PATH }}.pdf"
-  FILE_ODT: "${{ env.FILE_PATH }}.odt"
-  FILE_DOCX: "${{ env.FILE_PATH }}.docx"
-  FILE_HTML_LIVE: "${{ env.FILE_PATH }}_live.html"
+  # Единое определение всех выходных файлов
+  FILE_PDF: "${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.pdf"
+  FILE_ODT: "${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.odt"
+  FILE_DOCX: "${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.docx"
+  FILE_HTML_LIVE: "${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}_live.html"
 
 jobs:
   build:
@@ -58,10 +55,6 @@ jobs:
           INPUT_FORMAT: "markdown"
           INPUT_FILE: "./cv.md"
           HTML_TEMPLATE_FILE: "./pandoc-templates/sidebar-green-template.html"
-          FILE_PDF: ${{ env.FILE_PDF }}
-          FILE_ODT: ${{ env.FILE_ODT }}
-          FILE_DOCX: ${{ env.FILE_DOCX }}
-          FILE_HTML_LIVE: ${{ env.FILE_HTML_LIVE }}
         run: |
           #!/bin/bash
           /usr/bin/pandoc ${INPUT_FILE} -t html --pdf-engine=wkhtmltopdf --template="${HTML_TEMPLATE_FILE}" -o ${FILE_PDF} -f ${INPUT_FORMAT}
@@ -88,16 +81,16 @@ jobs:
       matrix:
         format:
           - name: PDF
-            path: ${{ env.FILE_PDF }}
+            var: FILE_PDF
             check_size: true
           - name: DOCX
-            path: ${{ env.FILE_DOCX }}
+            var: FILE_DOCX
             check_size: false
           - name: ODT
-            path: ${{ env.FILE_ODT }}
+            var: FILE_ODT
             check_size: false
           - name: HTML (live)
-            path: ${{ env.FILE_HTML_LIVE }}
+            var: FILE_HTML_LIVE
             check_size: false
 
     steps:
@@ -108,18 +101,22 @@ jobs:
           path: ${{ env.OUTPUT_FOLDER }}
 
       - name: Check ${{ matrix.format.name }} exists
+        env:
+          FILE_PATH: ${{ env[matrix.format.var] }}
         run: |
-          if [ -f "${{ matrix.format.path }}" ]; then
-            echo "✅ ${{ matrix.format.name }} exists"
+          if [ -f "${FILE_PATH}" ]; then
+            echo "✅ ${{ matrix.format.name }} exists: ${FILE_PATH}"
           else
-            echo "❌ ${{ matrix.format.name }} not found"
+            echo "❌ ${{ matrix.format.name }} not found: ${FILE_PATH}"
             exit 1
           fi
 
       - name: Check ${{ matrix.format.name }} is not empty
         if: ${{ matrix.format.check_size == true }}
+        env:
+          FILE_PATH: ${{ env[matrix.format.var] }}
         run: |
-          if [ -s "${{ matrix.format.path }}" ]; then
+          if [ -s "${FILE_PATH}" ]; then
             echo "✅ ${{ matrix.format.name }} is non-empty"
           else
             echo "❌ ${{ matrix.format.name }} is empty"
