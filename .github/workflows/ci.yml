@@ -5,13 +5,13 @@ on:
   push:
     branches: [ main, dev ]
     paths:
-      - 'cv.md'
+      - 'resume.md'
       - 'pandoc-templates/**'
       - '.github/workflows/ci.yml'
   pull_request:
     branches: [ main, dev ]
     paths:
-      - 'cv.md'
+      - 'resume.md'
       - 'pandoc-templates/**'
       - '.github/workflows/ci.yml'
   workflow_dispatch:
@@ -129,13 +129,13 @@ jobs:
             check_size: true
           - name: DOCX
             var: FILE_DOCX
-            check_size: false
+            check_size: true
           - name: ODT
             var: FILE_ODT
-            check_size: false
+            check_size: true
           - name: HTML (live)
             var: FILE_HTML_LIVE
-            check_size: false
+            check_size: true
 
     steps:
       - name: Download artifacts
@@ -166,3 +166,4 @@ jobs:
             echo "❌ ${{ matrix.format.name }} is empty"
             exit 1
           fi
+
