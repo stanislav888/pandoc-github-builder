@@ -19,10 +19,14 @@ on:
 env:
   OUTPUT_FOLDER: ./release
   FILE_BASENAME: "_Dmitry_C++_SDE"
+  INPUT_FILE: "./cv.md"
+  INPUT_FORMAT: "markdown"
+  HTML_TEMPLATE_FILE: "./pandoc-templates/sidebar-green-template.html"
+  ODT_TEMPLATE_FILE: "./pandoc-templates/default.opendocument"
+  DOCX_TEMPLATE_FILE: "./pandoc-templates/default.ms"
 
 jobs:
-  # Job для генерации имён файлов
-  setup:
+  setup-file-names:
     runs-on: ubuntu-latest
     outputs:
       FILE_PDF: ${{ steps.set-names.outputs.FILE_PDF }}
@@ -41,12 +45,13 @@ jobs:
   build:
     name: Build Resume
     runs-on: ubuntu-latest
-    needs: setup
+    needs: setup-file-names
     env:
-      FILE_PDF: ${{ needs.setup.outputs.FILE_PDF }}
-      FILE_ODT: ${{ needs.setup.outputs.FILE_ODT }}
-      FILE_DOCX: ${{ needs.setup.outputs.FILE_DOCX }}
-      FILE_HTML_LIVE: ${{ needs.setup.outputs.FILE_HTML_LIVE }}
+      FILE_PDF: ${{ needs.setup-file-names.outputs.FILE_PDF }}
+      FILE_ODT: ${{ needs.setup-file-names.outputs.FILE_ODT }}
+      FILE_DOCX: ${{ needs.setup-file-names.outputs.FILE_DOCX }}
+      FILE_HTML_LIVE: ${{ needs.setup-file-names.outputs.FILE_HTML_LIVE }}
+      TITLE: "Dmitry a C++ SDE"
 
     steps:
       - name: Checkout repository
@@ -66,18 +71,39 @@ jobs:
       - name: Create output directory
         run: mkdir -p ${{ env.OUTPUT_FOLDER }}
 
-      - name: Generate resume files
-        env:
-          TITLE: "Dmitry a C++ SDE"
-          INPUT_FORMAT: "markdown"
-          INPUT_FILE: "./cv.md"
-          HTML_TEMPLATE_FILE: "./pandoc-templates/sidebar-green-template.html"
+      - name: Generate PDF
         run: |
-          #!/bin/bash
-          /usr/bin/pandoc ${INPUT_FILE} -t html --pdf-engine=wkhtmltopdf --template="${HTML_TEMPLATE_FILE}" -o ${FILE_PDF} -f ${INPUT_FORMAT}
-          /usr/bin/pandoc ${INPUT_FILE} -s --toc --template="${HTML_TEMPLATE_FILE}" --metadata title="${TITLE}" -o ${FILE_HTML_LIVE} -f ${INPUT_FORMAT}
-          /usr/bin/pandoc ${INPUT_FILE} -t odt --template=./pandoc-templates/default.opendocument -o ${FILE_ODT} -f ${INPUT_FORMAT}
-          /usr/bin/pandoc ${INPUT_FILE} --template=./pandoc-templates/default.ms -o ${FILE_DOCX} -f ${INPUT_FORMAT}
+          /usr/bin/pandoc ${INPUT_FILE} \
+            -t html \
+            --pdf-engine=wkhtmltopdf \
+            --template="${HTML_TEMPLATE_FILE}" \
+            -o ${FILE_PDF} \
+            -f ${INPUT_FORMAT}
+
+      - name: Generate HTML (live)
+        run: |
+          /usr/bin/pandoc ${INPUT_FILE} \
+            -s \
+            --toc \
+            --template="${HTML_TEMPLATE_FILE}" \
+            --metadata title="${TITLE}" \
+            -o ${FILE_HTML_LIVE} \
+            -f ${INPUT_FORMAT}
+
+      - name: Generate ODT
+        run: |
+          /usr/bin/pandoc ${INPUT_FILE} \
+            -t odt \
+            --template="${ODT_TEMPLATE_FILE}" \
+            -o ${FILE_ODT} \
+            -f ${INPUT_FORMAT}
+
+      - name: Generate DOCX
+        run: |
+          /usr/bin/pandoc ${INPUT_FILE} \
+            --template="${DOCX_TEMPLATE_FILE}" \
+            -o ${FILE_DOCX} \
+            -f ${INPUT_FORMAT}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -90,7 +116,7 @@ jobs:
   test:
     name: Test generated files
     runs-on: ubuntu-latest
-    needs: [setup, build]
+    needs: [setup-file-names, build]
     if: always()
 
     strategy:
@@ -119,7 +145,7 @@ jobs:
 
       - name: Check ${{ matrix.format.name }} exists
         env:
-          FILE_PATH: ${{ needs.setup.outputs[matrix.format.var] }}
+          FILE_PATH: ${{ needs.setup-file-names.outputs[matrix.format.var] }}
         run: |
           if [ -f "${FILE_PATH}" ]; then
             echo "✅ ${{ matrix.format.name }} exists"
@@ -131,7 +157,7 @@ jobs:
       - name: Check ${{ matrix.format.name }} is not empty
         if: ${{ matrix.format.check_size == true }}
         env:
-          FILE_PATH: ${{ needs.setup.outputs.FILE_PDF }}
+          FILE_PATH: ${{ needs.setup-file-names.outputs.FILE_PDF }}
         run: |
           if [ -s "${FILE_PATH}" ]; then
             echo "✅ ${{ matrix.format.name }} is non-empty"
