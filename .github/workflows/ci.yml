@@ -19,6 +19,15 @@ on:
 env:
   OUTPUT_FOLDER: ./release
   FILE_BASENAME: "_Dmitry_C++_SDE"
+  
+  # Базовый путь ко всем файлам
+  FILE_PATH: "${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}"
+  
+  # Имена всех выходных файлов
+  FILE_PDF: "${{ env.FILE_PATH }}.pdf"
+  FILE_ODT: "${{ env.FILE_PATH }}.odt"
+  FILE_DOCX: "${{ env.FILE_PATH }}.docx"
+  FILE_HTML_LIVE: "${{ env.FILE_PATH }}_live.html"
 
 jobs:
   build:
@@ -46,16 +55,19 @@ jobs:
       - name: Generate resume files
         env:
           TITLE: "Dmitry a C++ SDE"
-          FILE_NAME: "${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}"
           INPUT_FORMAT: "markdown"
           INPUT_FILE: "./cv.md"
           HTML_TEMPLATE_FILE: "./pandoc-templates/sidebar-green-template.html"
+          FILE_PDF: ${{ env.FILE_PDF }}
+          FILE_ODT: ${{ env.FILE_ODT }}
+          FILE_DOCX: ${{ env.FILE_DOCX }}
+          FILE_HTML_LIVE: ${{ env.FILE_HTML_LIVE }}
         run: |
           #!/bin/bash
-          /usr/bin/pandoc ${INPUT_FILE} -t html --pdf-engine=wkhtmltopdf --template="${HTML_TEMPLATE_FILE}" -o ${FILE_NAME}.pdf -f ${INPUT_FORMAT}
-          /usr/bin/pandoc ${INPUT_FILE} -s --toc --template="${HTML_TEMPLATE_FILE}" --metadata title="${TITLE}" -o ${FILE_NAME}_live.html -f ${INPUT_FORMAT}
-          /usr/bin/pandoc ${INPUT_FILE} -t odt --template=./pandoc-templates/default.opendocument -o ${FILE_NAME}.odt -f ${INPUT_FORMAT}
-          /usr/bin/pandoc ${INPUT_FILE} --template=./pandoc-templates/default.ms -o ${FILE_NAME}.docx -f ${INPUT_FORMAT}
+          /usr/bin/pandoc ${INPUT_FILE} -t html --pdf-engine=wkhtmltopdf --template="${HTML_TEMPLATE_FILE}" -o ${FILE_PDF} -f ${INPUT_FORMAT}
+          /usr/bin/pandoc ${INPUT_FILE} -s --toc --template="${HTML_TEMPLATE_FILE}" --metadata title="${TITLE}" -o ${FILE_HTML_LIVE} -f ${INPUT_FORMAT}
+          /usr/bin/pandoc ${INPUT_FILE} -t odt --template=./pandoc-templates/default.opendocument -o ${FILE_ODT} -f ${INPUT_FORMAT}
+          /usr/bin/pandoc ${INPUT_FILE} --template=./pandoc-templates/default.ms -o ${FILE_DOCX} -f ${INPUT_FORMAT}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -71,6 +83,23 @@ jobs:
     needs: build
     if: always()
 
+    strategy:
+      fail-fast: false
+      matrix:
+        format:
+          - name: PDF
+            path: ${{ env.FILE_PDF }}
+            check_size: true
+          - name: DOCX
+            path: ${{ env.FILE_DOCX }}
+            check_size: false
+          - name: ODT
+            path: ${{ env.FILE_ODT }}
+            check_size: false
+          - name: HTML (live)
+            path: ${{ env.FILE_HTML_LIVE }}
+            check_size: false
+
     steps:
       - name: Download artifacts
         uses: actions/download-artifact@v4
@@ -78,18 +107,21 @@ jobs:
           name: Resume
           path: ${{ env.OUTPUT_FOLDER }}
 
-      - name: Verify generated files exist
+      - name: Check ${{ matrix.format.name }} exists
         run: |
-          test -f ${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.docx
-          test -f ${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}_live.html
-          test -f ${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.odt
-          echo "✅ All files exist!"
-
-      - name: Check PDF is not empty
-        run: |
-          if [ -s "${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.pdf" ]; then
-            echo "✅ PDF file is non-empty"
+          if [ -f "${{ matrix.format.path }}" ]; then
+            echo "✅ ${{ matrix.format.name }} exists"
           else
-            echo "❌ PDF file is empty or missing"
+            echo "❌ ${{ matrix.format.name }} not found"
+            exit 1
+          fi
+
+      - name: Check ${{ matrix.format.name }} is not empty
+        if: ${{ matrix.format.check_size == true }}
+        run: |
+          if [ -s "${{ matrix.format.path }}" ]; then
+            echo "✅ ${{ matrix.format.name }} is non-empty"
+          else
+            echo "❌ ${{ matrix.format.name }} is empty"
             exit 1
           fi
