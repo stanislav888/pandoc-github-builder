@@ -1,189 +1,110 @@
-# Dmitry Ivanov
-## C++ Software Development Engineer
 
-> *"Clean code, high performance, and modern C++ — my professional motto."*
+# DMITRY IVANOV
+**Senior C++ Software Engineer / Technical Lead**
 
----
-
-## 📫 Contact
-
-- **Email:** dmitry.ivanov@example.com
-- **GitHub:** [github.com/divanov](https://github.com/divanov)
-- **Telegram:** @dmitry_dev
-- **LinkedIn:** [linkedin.com/in/dmitry-ivanov](https://linkedin.com/in/dmitry-ivanov)
-- **Location:** Moscow, Russia
-
-[Back to top](#dmitry-ivanov)
+**Location:** Moscow, Russia | **Phone:** +7 (900) 123-45-67
+**Email:** d.ivanov.cpp@gmail.com | **LinkedIn:** [linkedin.com/in/divanov-cpp](https://linkedin.com)
+**GitHub:** [github.com/dmitry-ivanov-core](https://github.com) | **English:** Upper-Intermediate (B2)
+**Relocation:** Open to relocation (Serbia/Montenegro/Armenia), Remote/Hybrid/On-site
 
 ---
 
-## 🎯 Professional Summary
+### 🎯 PROFESSIONAL SUMMARY
 
-Results-driven **C++ Software Engineer** with **8+ years** of experience in:
-
-- **High‑load systems**
-- **Low‑latency applications**
-- **Embedded solutions**
-
-Proven track record in:
-
-| Domain   | Key Achievements |
-|----------|------------------|
-| FinTech  | HFT engine with <10µs latency |
-| Telecom  | SS7 stack optimization |
-| GameDev  | Multiplayer RPG core logic |
-
-> ⚡ Passionate about **clean code**, **performance optimization**, and modern **C++17/20**.
+Senior C++ Software Engineer with **8+ years of experience** in designing and developing high-load, low-latency distributed systems. Expert in Modern C++ (11/14/17/20/23) with a strong focus on performance optimization, lock-free programming, and network programming. Proven technical leadership experience, mentoring teams, and establishing best coding practices. Passionate about clean architecture, compile-time computation, and squeezing every microsecond out of the hot path.
 
 ---
 
-## 🧠 Core Competencies
+### 🛠️ TECHNICAL SKILLS
 
-### Languages & Technologies
-- **C++** (11/14/17/20) — advanced
-- **STL, Boost, Asio, Poco, nlohmann/json**
-- **Multithreading, Lock‑free structures, MPSC queues**
-- **Python, Bash, CMake, Conan, vcpkg**
-
-### Tools & Ecosystem
-- **Git, GitLab CI, GitHub Actions, Jenkins**
-- **Docker, Podman, Kubernetes (basics)**
-- **Valgrind, perf, gdb, sanitizers**
-- **JIRA, Confluence, Code Review**
-
-### Databases & Networking
-- **PostgreSQL, Redis, MongoDB**
-- **REST API, WebSockets, gRPC, ZeroMQ**
-- **TCP/IP, UDP, Multicast, DDS**
-
-```cpp
-// Example: lock-free queue snippet
-template<typename T>
-class MPSCQueue {
-    std::atomic<Node*> head;
-    std::atomic<Node*> tail;
-public:
-    void push(T value);
-    bool pop(T& out);
-};
-```
+| Category | Technologies & Tools |
+| :--- | :--- |
+| **Languages** | C++ (C++11/14/17/20/23), C, Python, SQL, Bash |
+| **Concurrency** | `std::thread`, `std::async`, OpenMP, Lock-free Queues (MoodyCamel), Memory Ordering, Thread Pools, Coroutines |
+| **Networking** | Boost.Asio, libuv, gRPC, REST (cpprestsdk), WebSockets, TCP/UDP Multicast |
+| **Libraries/Frameworks** | Boost (Asio, Beast, Spirit, Intrusive), STL, Protobuf, FlatBuffers, OpenCV |
+| **Build & CI/CD** | CMake, Ninja, Conan, vcpkg, Docker, Kubernetes (basics), Jenkins, GitLab CI |
+| **Databases** | PostgreSQL, Redis, MongoDB, ClickHouse |
+| **Dev Tools** | GDB, RR, Valgrind, perf, VTune, Sanitizers (ASan, TSan, UBSan), libFuzzer |
+| **Paradigms** | OOP, Generic/Metaprogramming, Functional, Actor Model |
+| **OS** | Linux (Primary), Windows, macOS |
 
 ---
 
-## 💼 Work Experience
-
-### **Senior C++ Developer** | **FinTech Corp** | 2022 – Present
-
-**Key responsibilities:**
-
-1. Design and implement **HFT engine**
-2. Optimize network stack
-3. Mentor junior developers
-
-**Achievements:**
-
-- ✅ Designed a **high‑frequency trading (HFT) engine** with latency **<10µs**
-- ✅ Optimized network stack, reducing overall latency by **30%**
-- ✅ Integrated **Google Benchmark** and **Sanitizers**, increasing stability to **99.99%**
-- ✅ Implemented a **lock‑free MPSC queue** achieving **3M ops/sec**
+### 💼 WORK EXPERIENCE
 
 ---
 
-### **C++ Software Engineer** | **GameDev Studio** | 2018 – 2022
+#### **FinCore Technologies** — *FinTech / Algorithmic Trading*
+**Senior C++ Developer / Tech Lead** | *Jan 2021 — Present (3.5 years)*
+*Led the development of the trading robot core and market data infrastructure.*
 
-- Developed **core gameplay logic** for a large‑scale multiplayer RPG
-- Migrated build system to **CMake + Conan** for 15+ microservices
-- Set up a **CI/CD pipeline (GitLab)** for automated testing and deployment
-- Participated in **migration from C++14 to C++20**, gaining a **20% performance boost**
+- **Leadership & Architecture:**
+    - Managed a team of 4 C++ engineers: conducted code reviews, mentored junior/middle developers, and enforced the Google C++ Style Guide.
+    - Architected an asynchronous market data processing engine handling **500,000 messages per second** per core.
+    - Decomposed a legacy monolith into microservices, reducing project build time by **40%** (from 20 mins to 12 mins).
 
-> 💡 **Insight:** The migration to C++20 reduced compilation time by 35% and improved code readability through concepts and ranges.
+- **Performance Optimization:**
+    - Optimized the critical order execution path using lock-free queues and custom memory pools (Arena allocators), reducing P99 latency from **15 µs to 3.2 µs**.
+    - Utilized heavy compile-time computation (`constexpr`, template metaprogramming) for parsing binary exchange protocols (ITCH, FAST), completely eliminating runtime overhead in the parsing layer.
+    - Developed a high-throughput serialization library based on FlatBuffers, achieving a **3x speedup** in data transmission compared to the previous Protobuf implementation.
 
----
+- **Reliability & Testing:**
+    - Engineered a fault-tolerant client gateway using C++20 Coroutines and Boost.Asio with automatic session recovery and persistent logging.
+    - Achieved **85% unit test coverage** (GoogleTest) for the core modules and integrated fuzz testing (libFuzzer) into the CI pipeline to catch edge cases in protocol handlers.
 
-### **Junior C++ Developer** | **Telecom Solutions** | 2016 – 2018
-
-- Maintained and refactored legacy **SS7 signaling stack**
-- Implemented unit tests using **Google Test**, increasing code coverage to **85%**
-- Fixed **memory leaks and race conditions** detected by Valgrind and TSAN
-
----
-
-## 🎓 Education
-
-### **M.Sc. in Computer Science**
-*Moscow Institute of Physics and Technology (MIPT)*  
-*2014 – 2020*
-
-**Courses completed:**
-
-- Advanced Algorithms
-- Distributed Systems
-- Compiler Design
-- Low‑level Optimization
-
-**Thesis:** *Lock‑free data structures for high‑performance computing*
+**Tech Stack:** C++17/20, Boost, Linux Kernel Tuning, TCP/IP, Redis, Docker, Prometheus/Grafana.
 
 ---
 
-## 📜 Certifications
+#### **GameVerse Studio** — *AAA Game Development*
+**Middle/Senior C++ Gameplay Programmer** | *May 2018 — Dec 2020 (2 years 8 months)*
+*Developed server-side and client-side logic for a multiplayer shooter (Unreal Engine 4/5).*
 
-| Certification | Year | Issuer |
-|---------------|------|--------|
-| C++ Institute Certified Professional Programmer (CPA) | 2021 | C++ Institute |
-| Advanced C++: Multithreading & Optimization | 2022 | Coursera |
-| **New:** Docker Deep Dive | 2025 | Udemy |
-| **New:** Kubernetes for Developers | 2025 | Linux Foundation |
+- **Gameplay Logic:**
+    - Implemented a Gameplay Ability System (GAS) in C++ with visual scripting wrappers for game designers, enabling fast iteration on character skills.
+    - Developed a robust replication system with client-side prediction and dead reckoning, ensuring smooth gameplay for users with ping up to 150ms.
+    - Integrated PhysX physics engine for destructible environments and dynamic rigid body interactions.
 
----
+- **Engine Optimization:**
+    - Profiled the Game Thread and Render Thread, identifying an animation system bottleneck. Optimized bone transform calculations using SIMD (SSE/AVX) intrinsics, resulting in a **20% FPS increase** on console platforms (PS4/Xbox One).
+    - Resolved memory fragmentation issues by implementing custom STL-compatible allocators tailored for console memory models.
 
-## 🛠️ Notable Projects
-
-### 1. **Lock‑free Queue Library**
-- Header‑only C++17 library with **MPSC** and **SPSC** queues
-- Benchmark shows **2.5x speedup** over `std::queue` with mutex
-- 📎 [github.com/divanov/lfqueue](https://github.com/divanov/lfqueue)
-
-### 2. **Async REST Client**
-- Built on **Boost.Asio** with connection pooling and retry logic
-- Used in production by **5+ internal services**
-- Example usage:
-
-```cpp
-AsyncRestClient client("https://api.example.com");
-auto response = client.get("/users/42").get();
-assert(response.status_code == 200);
-```
-
-### 3. **Trading Simulator** (side project)
-- Simulates market data feed using **UDP multicast**
-- Processes **1M messages/sec** on a single core
+**Tech Stack:** C++17, Unreal Engine 4/5, Blueprints, SIMD (SSE/AVX), Network Replication, Perforce.
 
 ---
 
-## 🏆 Achievements
+#### **DataStream LLC** — *Big Data / Video Processing*
+**C++ Software Engineer** | *Sep 2015 — Apr 2018 (2 years 8 months)*
+*Developed a high-load server for real-time video streaming and telemetry processing.*
 
-- 🎤 **Speaker** at C++ Russia 2023: *Lock‑free data structures in finance*
-- 👥 **Organizer** of Moscow C++ Meetup (2021–2024)
-- 📝 **Author** of 5+ technical articles on Habr (40K+ total reads)
+- Designed a multi-threaded asynchronous server using **Boost.Asio** and **OpenCV** to process video streams from IP cameras in real-time.
+- Implemented a flexible pipeline pattern allowing users to configure video processing chains (filters, transformations) without recompilation via dynamic plugin loading.
+- Created a client-server communication layer based on Protocol Buffers (gRPC) for interaction with mobile applications.
+- Developed a Redis caching layer for object detection results, which decreased the load on the GPU processing farm by **30%**.
 
----
-
-## 📄 Languages
-
-| Language | Proficiency |
-|----------|-------------|
-| Russian  | Native      |
-| English  | C1 (IELTS 7.5) |
+**Tech Stack:** C++11/14, Boost.Asio, OpenCV, gRPC, Redis, CMake, Linux.
 
 ---
 
-## 🧩 References
+### 🎓 EDUCATION
 
-Available upon request.
+- **Master of Science in Computer Science**
+    *Moscow Institute of Physics and Technology (MIPT), Department of Radio Engineering and Cybernetics* — 2015
+    *Thesis:* "Latency Optimization Methods in Distributed Real-Time Systems Using Asynchronous I/O."
 
 ---
 
-*Last updated: June 2026*
+### 🏆 ACHIEVEMENTS & CERTIFICATIONS
 
-[⬆ Back to top](#dmitry-ivanov)
-```
+- **Winner of "Digital Breakthrough 2023" Hackathon** (Case: "Credit Risk Calculation Optimization using C++ and CUDA").
+- **Certification:** "Modern C++ Design Patterns" (UML, OOP, Observer, Factory, Strategy) — Coursera.
+- **Open Source Contributor:** Contributed memory ordering bug fixes to the `concurrentqueue` library.
+
+---
+
+### 📝 ADDITIONAL INFORMATION
+
+- **Languages:** English (Upper-Intermediate, reading technical documentation, conducting stand-ups), Russian (Native).
+- **Interests:** HPC, 3D Graphics (Vulkan), Compiler Theory, Open Source Hardware.
+- **Work Authorization:** Remote (IP/Self-employed), ready for visa sponsorship if relocation is required.
