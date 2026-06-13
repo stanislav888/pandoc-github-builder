@@ -5,23 +5,28 @@ on:
   push:
     branches: [ main, dev ]
     paths:
-      - 'cv.md'
+      - 'resume.md'
       - 'pandoc-templates/**'
       - '.github/workflows/ci.yml'
   pull_request:
     branches: [ main, dev ]
     paths:
-      - 'cv.md'
+      - 'resume.md'
       - 'pandoc-templates/**'
       - '.github/workflows/ci.yml'
   workflow_dispatch:
 
 env:
-  FILE_BASENAME: "Dmitry_C++_Software_Developer_resume"
+  ### Change it to yours!!! ###
+  FILE_BASENAME: "Dmitry_Ivanov_C++_Software_Developer_resume"
+  #############################
+
   OUTPUT_FOLDER: ./release
   INPUT_FILE: "./resume.md"
   INPUT_FORMAT: "markdown"
   HTML_TEMPLATE_FILE: "./pandoc-templates/sidebar-green-template.html"
+
+  # They were taken from the stock 'pandoc' templates collection and are distributed under their licence
   ODT_TEMPLATE_FILE: "./pandoc-templates/default.opendocument"
   DOCX_TEMPLATE_FILE: "./pandoc-templates/default.ms"
 
@@ -129,13 +134,13 @@ jobs:
             check_size: true
           - name: DOCX
             var: FILE_DOCX
-            check_size: false
+            check_size: true
           - name: ODT
             var: FILE_ODT
-            check_size: false
+            check_size: true
           - name: HTML (live)
             var: FILE_HTML_LIVE
-            check_size: false
+            check_size: true
 
     steps:
       - name: Download artifacts
@@ -166,3 +171,43 @@ jobs:
             echo "❌ ${{ matrix.format.name }} is empty"
             exit 1
           fi
+
+  # Job is to update resume in GitHub Releases. 
+  # It works only with manual workflow launch from 'main' branch only. 
+  # Therefore you can experiment with your resume in different branches.
+  upload-release:
+    name: Upload to GitHub Releases
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download built artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: Resume
+          path: ./release
+
+      - name: Delete existing release (if any)
+        uses: dev-drprasad/delete-tag-and-release@v1.1
+        with:
+          tag_name: resume-latest
+          delete_release: true
+
+      - name: Create new release with latest version
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: resume-latest
+          name: Resume (Latest)
+          body: |
+            Latest automatically generated resume
+            
+            **Build date:** ${{ github.event.repository.updated_at }}
+          files: |
+            ./release/*.pdf
+            ./release/*.docx
+            ./release/*.odt
+            ./release/*.html
+          fail_on_unmatched_files: true
