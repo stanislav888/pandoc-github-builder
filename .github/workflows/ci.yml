@@ -17,9 +17,9 @@ on:
   workflow_dispatch:
 
 env:
+  FILE_BASENAME: "Dmitry_C++_Software_Developer_resume"
   OUTPUT_FOLDER: ./release
-  FILE_BASENAME: "_Dmitry_C++_SDE"
-  INPUT_FILE: "./cv.md"
+  INPUT_FILE: "./resume.md"
   INPUT_FORMAT: "markdown"
   HTML_TEMPLATE_FILE: "./pandoc-templates/sidebar-green-template.html"
   ODT_TEMPLATE_FILE: "./pandoc-templates/default.opendocument"
@@ -51,7 +51,7 @@ jobs:
       FILE_ODT: ${{ needs.setup-file-names.outputs.FILE_ODT }}
       FILE_DOCX: ${{ needs.setup-file-names.outputs.FILE_DOCX }}
       FILE_HTML_LIVE: ${{ needs.setup-file-names.outputs.FILE_HTML_LIVE }}
-      TITLE: "Dmitry a C++ SDE"
+      TITLE: ${{ env.FILE_BASENAME }}
 
     steps:
       - name: Checkout repository

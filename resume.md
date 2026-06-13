@@ -17,20 +17,6 @@
 
 ---
 
-## Table of Contents
-
-1. [Professional Summary](#-professional-summary)
-2. [Core Competencies](#-core-competencies)
-3. [Work Experience](#-work-experience)
-4. [Education](#-education)
-5. [Certifications](#-certifications)
-6. [Notable Projects](#-notable-projects)
-7. [Achievements](#-achievements)
-8. [Languages](#-languages)
-9. [References](#-references)
-
----
-
 ## 🎯 Professional Summary
 
 Results-driven **C++ Software Engineer** with **8+ years** of experience in:
