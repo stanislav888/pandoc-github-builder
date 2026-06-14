@@ -56,6 +56,7 @@ jobs:
           echo "DOCX_TEMPLATE_FILE=${{ env.DOCX_TEMPLATE_FILE }}" >> $GITHUB_OUTPUT
           echo "INPUT_FILE=${{ env.INPUT_FILE }}" >> $GITHUB_OUTPUT
           echo "INPUT_FORMAT=${{ env.INPUT_FORMAT }}" >> $GITHUB_OUTPUT
+          echo "FILE_BASENAME=${{ env.FILE_BASENAME }}" >> $GITHUB_OUTPUT
 
       - name: Generate file names
         id: set-names
@@ -109,6 +110,7 @@ jobs:
       DOCX_TEMPLATE_FILE: ${{ needs.setup-file-names.outputs.DOCX_TEMPLATE_FILE }}
       INPUT_FILE: ${{ needs.setup-file-names.outputs.INPUT_FILE }}
       INPUT_FORMAT: ${{ needs.setup-file-names.outputs.INPUT_FORMAT }}
+      FILE_BASENAME: ${{ needs.setup-file-names.outputs.FILE_BASENAME }}
 
     steps:
       - name: Checkout repository
