@@ -24,6 +24,7 @@ env:
 
 jobs:
   setup-file-names:
+    name: Setup environment variables
     runs-on: ubuntu-latest
     outputs:
       FILE_PDF: ${{ steps.set-names.outputs.FILE_PDF }}
