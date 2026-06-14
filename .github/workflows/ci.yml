@@ -114,17 +114,34 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Cache APT packages
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: pandoc xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils
+          version: 1.0   # меняйте вручную, если нужно принудительно сбросить кеш
+
+      - name: Cache wkhtmltopdf installer
+        id: cache-wkhtml
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/wkhtmltox.deb
+          key: wkhtmltopdf-${{ runner.os }}-0.12.6.1-2
+
+      - name: Download wkhtmltopdf (if not cached)
+        if: steps.cache-wkhtml.outputs.cache-hit != 'true'
+        run: |
+          wget -q -O ${{ runner.temp }}/wkhtmltox.deb \
+            https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.jammy_amd64.deb
+
+      - name: Install wkhtmltopdf
+        run: |
+          sudo dpkg -i ${{ runner.temp }}/wkhtmltox.deb || sudo apt-get install -f -y
+          wkhtmltopdf --version
+
       - name: Install pandoc
         run: |
           sudo apt-get update
           sudo apt-get install -y pandoc
-
-      - name: Install wkhtmltopdf (for PDF generation)
-        run: |
-          sudo apt-get install -y xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils 
-          wget -q https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.jammy_amd64.deb
-          sudo dpkg -i wkhtmltox_0.12.6.1-2.jammy_amd64.deb || sudo apt-get install -f -y
-          wkhtmltopdf --version
 
       - name: Create output directory
         run: mkdir -p ${{ env.OUTPUT_FOLDER }}
