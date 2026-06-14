@@ -121,8 +121,8 @@ jobs:
       - name: Cache APT packages
         uses: awalsh128/cache-apt-pkgs-action@v1
         with:
-          packages: pandoc xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils
-          version: 1.0   # меняйте вручную, если нужно принудительно сбросить кеш
+          packages: pandoc xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils pandoc-data
+          version: 1.0 
 
       - name: Cache wkhtmltopdf installer
         id: cache-wkhtml
@@ -144,7 +144,6 @@ jobs:
 
       - name: Install pandoc
         run: |
-          sudo apt-get update
           sudo apt-get install -y pandoc
 
       - name: Create output directory
