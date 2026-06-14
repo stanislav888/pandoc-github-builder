@@ -37,8 +37,9 @@ jobs:
       - name: Load environment from settings.env.txt
         uses: xom9ikk/dotenv@v2
         with:
-          path: ./
+          path: ../../../
           env-file: settings.env.txt
+          load-mode: strict
 
       - name: Generate file names
         id: set-names
