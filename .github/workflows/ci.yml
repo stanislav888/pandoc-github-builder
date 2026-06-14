@@ -24,6 +24,7 @@ env:
 
 jobs:
   setup-file-names:
+    name: Setup environment variables
     runs-on: ubuntu-latest
     outputs:
       FILE_PDF: ${{ steps.set-names.outputs.FILE_PDF }}
@@ -35,6 +36,7 @@ jobs:
       DOCX_TEMPLATE_FILE: ${{ steps.get-vars.outputs.DOCX_TEMPLATE_FILE }}
       INPUT_FILE: ${{ steps.get-vars.outputs.INPUT_FILE }}
       INPUT_FORMAT: ${{ steps.get-vars.outputs.INPUT_FORMAT }}
+      FILE_BASENAME: ${{ steps.get-vars.outputs.FILE_BASENAME }}
 
     steps:
       - name: Checkout repository
@@ -56,6 +58,7 @@ jobs:
           echo "DOCX_TEMPLATE_FILE=${{ env.DOCX_TEMPLATE_FILE }}" >> $GITHUB_OUTPUT
           echo "INPUT_FILE=${{ env.INPUT_FILE }}" >> $GITHUB_OUTPUT
           echo "INPUT_FORMAT=${{ env.INPUT_FORMAT }}" >> $GITHUB_OUTPUT
+          echo "FILE_BASENAME=${{ env.FILE_BASENAME }}" >> $GITHUB_OUTPUT
 
       - name: Generate file names
         id: set-names
@@ -109,22 +112,39 @@ jobs:
       DOCX_TEMPLATE_FILE: ${{ needs.setup-file-names.outputs.DOCX_TEMPLATE_FILE }}
       INPUT_FILE: ${{ needs.setup-file-names.outputs.INPUT_FILE }}
       INPUT_FORMAT: ${{ needs.setup-file-names.outputs.INPUT_FORMAT }}
+      FILE_BASENAME: ${{ needs.setup-file-names.outputs.FILE_BASENAME }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Cache APT packages
+        uses: awalsh128/cache-apt-pkgs-action@v1
+        with:
+          packages: pandoc xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils pandoc-data
+          version: 1.0 
+
+      - name: Cache wkhtmltopdf installer
+        id: cache-wkhtml
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/wkhtmltox.deb
+          key: wkhtmltopdf-${{ runner.os }}-0.12.6.1-2
+
+      - name: Download wkhtmltopdf (if not cached)
+        if: steps.cache-wkhtml.outputs.cache-hit != 'true'
+        run: |
+          wget -q -O ${{ runner.temp }}/wkhtmltox.deb \
+            https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.jammy_amd64.deb
+
+      - name: Install wkhtmltopdf
+        run: |
+          sudo dpkg -i ${{ runner.temp }}/wkhtmltox.deb || sudo apt-get install -f -y
+          wkhtmltopdf --version
+
       - name: Install pandoc
         run: |
-          sudo apt-get update
           sudo apt-get install -y pandoc
-
-      - name: Install wkhtmltopdf (for PDF generation)
-        run: |
-          sudo apt-get install -y xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils 
-          wget -q https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-2/wkhtmltox_0.12.6.1-2.jammy_amd64.deb
-          sudo dpkg -i wkhtmltox_0.12.6.1-2.jammy_amd64.deb || sudo apt-get install -f -y
-          wkhtmltopdf --version
 
       - name: Create output directory
         run: mkdir -p ${{ env.OUTPUT_FOLDER }}
