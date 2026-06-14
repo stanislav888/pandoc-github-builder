@@ -8,27 +8,19 @@ on:
       - 'resume.md'
       - 'pandoc-templates/**'
       - '.github/workflows/ci.yml'
+      - 'settings.env.txt'
   pull_request:
     branches: [ main, dev ]
     paths:
       - 'resume.md'
       - 'pandoc-templates/**'
       - '.github/workflows/ci.yml'
+      - 'settings.env.txt'
   workflow_dispatch:
 
 env:
-  ### Change it to yours!!! ###
-  FILE_BASENAME: "Dmitry_Ivanov_C++_Software_Developer_resume"
-  #############################
-
   OUTPUT_FOLDER: ./release
-  INPUT_FILE: "./resume.md"
   INPUT_FORMAT: "markdown"
-  HTML_TEMPLATE_FILE: "./pandoc-templates/sidebar-green-template.html"
-
-  # They were taken from the stock 'pandoc' templates collection and are distributed under their licence
-  ODT_TEMPLATE_FILE: "./pandoc-templates/default.opendocument"
-  DOCX_TEMPLATE_FILE: "./pandoc-templates/default.ms"
 
 jobs:
   setup-file-names:
@@ -39,6 +31,15 @@ jobs:
       FILE_DOCX: ${{ steps.set-names.outputs.FILE_DOCX }}
       FILE_HTML_LIVE: ${{ steps.set-names.outputs.FILE_HTML_LIVE }}
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Load environment from settings.env.txt
+        uses: xom9ikk/dotenv@v2
+        with:
+          path: ./
+          env-file: settings.env.txt
+
       - name: Generate file names
         id: set-names
         run: |
@@ -46,6 +47,42 @@ jobs:
           echo "FILE_ODT=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.odt" >> $GITHUB_OUTPUT
           echo "FILE_DOCX=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.docx" >> $GITHUB_OUTPUT
           echo "FILE_HTML_LIVE=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}_live.html" >> $GITHUB_OUTPUT
+
+      - name: Debug loaded variables
+        run: |
+          echo "Building: ${{ env.FILE_BASENAME }}"
+          echo "Input file: ${{ env.INPUT_FILE }}"
+
+      - name: Validate required environment variables
+        run: |
+          # List of required variables
+          required_vars=(
+            "FILE_BASENAME"
+            "INPUT_FILE"
+            "HTML_TEMPLATE_FILE"
+            "ODT_TEMPLATE_FILE"
+            "DOCX_TEMPLATE_FILE"
+          )
+          
+          missing_vars=()
+          
+          for var in "${required_vars[@]}"; do
+            value="${!var}"
+            if [ -z "$value" ]; then
+              missing_vars+=("$var")
+            fi
+          done
+          
+          if [ ${#missing_vars[@]} -ne 0 ]; then
+            echo "❌ ERROR: The following required variables are empty or missing:"
+            printf '  - %s\n' "${missing_vars[@]}"
+            echo ""
+            echo "Please check your settings.env.txt file and ensure all variables are set."
+            exit 1
+          fi
+          
+          echo "✅ All required variables are present:"
+          printf '  - %s: %s\n' "${!required_vars[@]}" "${required_vars[@]/#/}"
 
   build:
     name: Build Resume
