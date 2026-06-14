@@ -35,6 +35,7 @@ jobs:
       DOCX_TEMPLATE_FILE: ${{ steps.get-vars.outputs.DOCX_TEMPLATE_FILE }}
       INPUT_FILE: ${{ steps.get-vars.outputs.INPUT_FILE }}
       INPUT_FORMAT: ${{ steps.get-vars.outputs.INPUT_FORMAT }}
+      FILE_BASENAME: ${{ steps.get-vars.outputs.FILE_BASENAME }}
 
     steps:
       - name: Checkout repository
