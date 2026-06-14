@@ -8,27 +8,19 @@ on:
       - 'resume.md'
       - 'pandoc-templates/**'
       - '.github/workflows/ci.yml'
+      - 'settings.env.txt'
   pull_request:
     branches: [ main, dev ]
     paths:
       - 'resume.md'
       - 'pandoc-templates/**'
       - '.github/workflows/ci.yml'
+      - 'settings.env.txt'
   workflow_dispatch:
 
 env:
-  ### Change it to yours!!! ###
-  FILE_BASENAME: "Dmitry_Ivanov_C++_Software_Developer_resume"
-  #############################
-
   OUTPUT_FOLDER: ./release
-  INPUT_FILE: "./resume.md"
   INPUT_FORMAT: "markdown"
-  HTML_TEMPLATE_FILE: "./pandoc-templates/sidebar-green-template.html"
-
-  # They were taken from the stock 'pandoc' templates collection and are distributed under their licence
-  ODT_TEMPLATE_FILE: "./pandoc-templates/default.opendocument"
-  DOCX_TEMPLATE_FILE: "./pandoc-templates/default.ms"
 
 jobs:
   setup-file-names:
@@ -38,7 +30,33 @@ jobs:
       FILE_ODT: ${{ steps.set-names.outputs.FILE_ODT }}
       FILE_DOCX: ${{ steps.set-names.outputs.FILE_DOCX }}
       FILE_HTML_LIVE: ${{ steps.set-names.outputs.FILE_HTML_LIVE }}
+      HTML_TEMPLATE_FILE: ${{ steps.get-vars.outputs.HTML_TEMPLATE_FILE }}
+      ODT_TEMPLATE_FILE: ${{ steps.get-vars.outputs.ODT_TEMPLATE_FILE }}
+      DOCX_TEMPLATE_FILE: ${{ steps.get-vars.outputs.DOCX_TEMPLATE_FILE }}
+      INPUT_FILE: ${{ steps.get-vars.outputs.INPUT_FILE }}
+      INPUT_FORMAT: ${{ steps.get-vars.outputs.INPUT_FORMAT }}
+
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create symlink from settings.env.txt to .env
+        run: ln -sf settings.env.txt .env
+
+      - name: Load environment from settings.env.txt
+        uses: xom9ikk/dotenv@v2
+        with:
+          path: ./
+
+      - name: Extract template variables
+        id: get-vars
+        run: |
+          echo "HTML_TEMPLATE_FILE=${{ env.HTML_TEMPLATE_FILE }}" >> $GITHUB_OUTPUT
+          echo "ODT_TEMPLATE_FILE=${{ env.ODT_TEMPLATE_FILE }}" >> $GITHUB_OUTPUT
+          echo "DOCX_TEMPLATE_FILE=${{ env.DOCX_TEMPLATE_FILE }}" >> $GITHUB_OUTPUT
+          echo "INPUT_FILE=${{ env.INPUT_FILE }}" >> $GITHUB_OUTPUT
+          echo "INPUT_FORMAT=${{ env.INPUT_FORMAT }}" >> $GITHUB_OUTPUT
+
       - name: Generate file names
         id: set-names
         run: |
@@ -46,6 +64,36 @@ jobs:
           echo "FILE_ODT=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.odt" >> $GITHUB_OUTPUT
           echo "FILE_DOCX=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.docx" >> $GITHUB_OUTPUT
           echo "FILE_HTML_LIVE=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}_live.html" >> $GITHUB_OUTPUT
+
+      - name: Validate environment variables from settings.env.txt 
+        run: |
+          # List of required variables
+          required_vars=(
+            "FILE_BASENAME"
+            "INPUT_FILE"
+            "HTML_TEMPLATE_FILE"
+            "ODT_TEMPLATE_FILE"
+            "DOCX_TEMPLATE_FILE"
+          )
+          
+          missing_vars=()
+          
+          for var in "${required_vars[@]}"; do
+            value="${!var}"
+            if [ -z "$value" ]; then
+              missing_vars+=("$var")
+            fi
+          done
+          
+          if [ ${#missing_vars[@]} -ne 0 ]; then
+            echo "❌ ERROR: The following required variables are empty or missing:"
+            printf '  - %s\n' "${missing_vars[@]}"
+            echo ""
+            echo "Please check your settings.env.txt file and ensure all variables are set."
+            exit 1
+          fi
+          
+          echo "✅ All required variables are present:"
 
   build:
     name: Build Resume
@@ -56,6 +104,11 @@ jobs:
       FILE_ODT: ${{ needs.setup-file-names.outputs.FILE_ODT }}
       FILE_DOCX: ${{ needs.setup-file-names.outputs.FILE_DOCX }}
       FILE_HTML_LIVE: ${{ needs.setup-file-names.outputs.FILE_HTML_LIVE }}
+      HTML_TEMPLATE_FILE: ${{ needs.setup-file-names.outputs.HTML_TEMPLATE_FILE }}
+      ODT_TEMPLATE_FILE: ${{ needs.setup-file-names.outputs.ODT_TEMPLATE_FILE }}
+      DOCX_TEMPLATE_FILE: ${{ needs.setup-file-names.outputs.DOCX_TEMPLATE_FILE }}
+      INPUT_FILE: ${{ needs.setup-file-names.outputs.INPUT_FILE }}
+      INPUT_FORMAT: ${{ needs.setup-file-names.outputs.INPUT_FORMAT }}
 
     steps:
       - name: Checkout repository
@@ -76,7 +129,7 @@ jobs:
       - name: Create output directory
         run: mkdir -p ${{ env.OUTPUT_FOLDER }}
 
-      - name: Generate PDF
+      - name: Generate PDF 
         run: |
           /usr/bin/pandoc ${INPUT_FILE} \
             -t html \
@@ -172,7 +225,7 @@ jobs:
             exit 1
           fi
 
-  # Job is to update resume in GitHub Releases. 
+  # The job is to update resume in GitHub Releases. 
   # It works only with manual workflow launch from 'main' branch only. 
   # Therefore you can experiment with your resume in different branches.
   upload-release:
@@ -187,7 +240,7 @@ jobs:
       - name: Download built artifacts
         uses: actions/download-artifact@v4
         with:
-          name: Resume
+          name: Resume_archive
           path: ./release
 
       - name: Delete existing release (if any)
@@ -195,6 +248,8 @@ jobs:
         with:
           tag_name: resume-latest
           delete_release: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create new release with latest version
         uses: softprops/action-gh-release@v2
