@@ -65,7 +65,7 @@ jobs:
           echo "FILE_DOCX=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.docx" >> $GITHUB_OUTPUT
           echo "FILE_HTML_LIVE=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}_live.html" >> $GITHUB_OUTPUT
 
-      - name: Validate required environment variables
+      - name: Validate environment variables from settings.env.txt 
         run: |
           # List of required variables
           required_vars=(
@@ -129,12 +129,7 @@ jobs:
       - name: Create output directory
         run: mkdir -p ${{ env.OUTPUT_FOLDER }}
 
-      - name: Generate PDF
-        env:
-          INPUT_FILE: ${{ env.INPUT_FILE }}
-          INPUT_FORMAT: ${{ env.INPUT_FORMAT }}
-          HTML_TEMPLATE_FILE: ${{ env.HTML_TEMPLATE_FILE }}
-          FILE_PDF: ${{ env.FILE_PDF }}
+      - name: Generate PDF 
         run: |
           /usr/bin/pandoc ${INPUT_FILE} \
             -t html \
@@ -230,7 +225,7 @@ jobs:
             exit 1
           fi
 
-  # Job is to update resume in GitHub Releases. 
+  # The job is to update resume in GitHub Releases. 
   # It works only with manual workflow launch from 'main' branch only. 
   # Therefore you can experiment with your resume in different branches.
   upload-release:
