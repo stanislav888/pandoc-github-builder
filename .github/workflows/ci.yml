@@ -187,7 +187,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: Resume
+          name: Resume_archive
           path: ${{ env.OUTPUT_FOLDER }}/
           retention-days: 7
           if-no-files-found: error
