@@ -14,6 +14,8 @@ Click **Fork** on the [source repository](https://github.com/stanislav888/pandoc
 git clone https://github.com/<YOUR_GIHUB_USERNAME>/pandoc-github-builder.git
 cd pandoc-github-builder
 ```
+**OR**
+Use the GitHub Web editor to edit all the files mentioned below.
 
 ### 3. Replace the resume content
 
