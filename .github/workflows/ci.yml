@@ -33,7 +33,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        
+
       - name: Create symlink from settings.env.txt to .env
         run: ln -sf settings.env.txt .env
 
@@ -50,11 +50,6 @@ jobs:
           echo "FILE_ODT=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.odt" >> $GITHUB_OUTPUT
           echo "FILE_DOCX=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.docx" >> $GITHUB_OUTPUT
           echo "FILE_HTML_LIVE=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}_live.html" >> $GITHUB_OUTPUT
-
-      - name: Debug loaded variables
-        run: |
-          echo "Building: ${{ env.FILE_BASENAME }}"
-          echo "Input file: ${{ env.INPUT_FILE }}"
 
       - name: Validate required environment variables
         run: |
@@ -86,6 +81,14 @@ jobs:
           
           echo "✅ All required variables are present:"
           printf '  - %s: %s\n' "${!required_vars[@]}" "${required_vars[@]/#/}"
+
+      - name: Debug loaded variables
+        run: |
+          echo "Building: ${{ env.FILE_BASENAME }}"
+          echo "Input file: ${{ env.INPUT_FILE }}"
+          echo "HTML_TEMPLATE_FILE: ${{ env.HTML_TEMPLATE_FILE }}"
+          echo "ODT_TEMPLATE_FILE: ${{ env.ODT_TEMPLATE_FILE }}"
+          echo "DOCX_TEMPLATE_FILE: ${{ env.DOCX_TEMPLATE_FILE }}"
 
   build:
     name: Build Resume
