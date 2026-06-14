@@ -105,3 +105,5 @@ All original content in this repository is distributed under **MIT License** (`S
 - [GitHub Actions](https://github.com/features/actions) – Automation platform
 
 ---
+
+P.S. It is my home lab to train CI\CD skills in GitHub Actions.
