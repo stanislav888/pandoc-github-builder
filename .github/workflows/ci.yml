@@ -33,12 +33,14 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        
+      - name: Create symlink from settings.env.txt to .env
+        run: ln -sf settings.env.txt .env
 
       - name: Load environment from settings.env.txt
         uses: xom9ikk/dotenv@v2
         with:
-          path: ../../
-          env-file: settings.env.txt
+          path: ./
           load-mode: strict
 
       - name: Generate file names
