@@ -95,6 +95,11 @@ jobs:
     runs-on: ubuntu-latest
     needs: setup-file-names
     env:
+      INPUT_FILE: ${{ env.INPUT_FILE }}
+      INPUT_FORMAT: ${{ env.INPUT_FORMAT }}
+      HTML_TEMPLATE_FILE: ${{ env.HTML_TEMPLATE_FILE }}
+      ODT_TEMPLATE_FILE: ${{ env.ODT_TEMPLATE_FILE }}
+      DOCX_TEMPLATE_FILE: ${{ env.DOCX_TEMPLATE_FILE }}
       FILE_PDF: ${{ needs.setup-file-names.outputs.FILE_PDF }}
       FILE_ODT: ${{ needs.setup-file-names.outputs.FILE_ODT }}
       FILE_DOCX: ${{ needs.setup-file-names.outputs.FILE_DOCX }}
@@ -120,6 +125,11 @@ jobs:
         run: mkdir -p ${{ env.OUTPUT_FOLDER }}
 
       - name: Generate PDF
+        env:
+          INPUT_FILE: ${{ env.INPUT_FILE }}
+          INPUT_FORMAT: ${{ env.INPUT_FORMAT }}
+          HTML_TEMPLATE_FILE: ${{ env.HTML_TEMPLATE_FILE }}
+          FILE_PDF: ${{ env.FILE_PDF }}
         run: |
           /usr/bin/pandoc ${INPUT_FILE} \
             -t html \
