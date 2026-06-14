@@ -118,6 +118,9 @@ jobs:
       - name: Create output directory
         run: mkdir -p ${{ env.OUTPUT_FOLDER }}
 
+      - name: Create symlink from settings.env.txt to .env
+        run: ln -sf settings.env.txt .env
+
       - name: Load environment from settings.env.txt
         uses: xom9ikk/dotenv@v2
         with:
