@@ -219,7 +219,7 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          name: Resume
+          name: Resume_archive
           path: ${{ env.OUTPUT_FOLDER }}
 
       - name: Check ${{ matrix.format.name }} exists
