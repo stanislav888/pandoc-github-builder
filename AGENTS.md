@@ -110,3 +110,76 @@ This template is the fully implemented working template with all UI features. Do
 - Command: `pandoc resume.md -s --template=pandoc-templates/rich.html --toc --toc-depth=3 --metadata title="..." -o /tmp/resume_rich.html`
 - Build script `build_resume.sh` generates both `{basename}_simple.html` and `{basename}_rich.html`
 
+## Document Generation Guide
+
+### Overview
+All document generation is handled by `build_resume.sh`, which reads configuration from `settings.env.txt`. The script generates documents in 6 formats from a single Markdown source (`./resume.md`).
+
+### Configuration (`settings.env.txt`)
+- `FILE_BASENAME` - Output filename prefix
+- `INPUT_FILE` - Source Markdown file
+- `HTML_TEMPLATE_FILE` - Template for simple HTML (`simple.html`)
+- `RICH_TEMPLATE_FILE` - Template for rich HTML (`rich.html`)
+- `ODT_TEMPLATE_FILE` - Template for ODT format
+- `DOCX_TEMPLATE_FILE` - Template for DOCX format
+
+### Output Files
+| Format | Output Filename | Template | Flags |
+|--------|----------------|----------|-------|
+| HTML Simple | `{basename}_simple.html` | `simple.html` | `-s --toc --toc-depth=3 --metadata --embed-resources` |
+| HTML Rich | `{basename}_rich.html` | `rich.html` | `-s --toc --toc-depth=3 --metadata --embed-resources` |
+| Preview | `/tmp/resume_rich.html` | `rich.html` | Copy of rich HTML |
+| PDF | `{basename}.pdf` | `simple.html` | `-t html --pdf-engine=wkhtmltopdf --metadata` |
+| ODT | `{basename}.odt` | `default.opendocument` | `-t odt --template` |
+| DOCX | `{basename}.docx` | `default.ms` | `--template` |
+
+### Build Script (`build_resume.sh`)
+Usage: `bash build_resume.sh [OUTPUT_FOLDER]`
+- Default output folder: `/tmp/pandoc_builder`
+- Reads all settings from `settings.env.txt`
+- Generates both HTML variants (simple + rich)
+- Generates PDF, ODT, DOCX
+- Copies rich HTML to `/tmp/resume_rich.html` for preview
+- Skips PDF if `wkhtmltopdf` not installed
+
+### Manual Generation Commands
+
+**HTML Simple:**
+```bash
+pandoc resume.md -s --toc --toc-depth=3 --template=pandoc-templates/simple.html --metadata title="Dmitry Ivanov" --embed-resources -o /tmp/preview_simple.html
+```
+
+**HTML Rich (Preview):**
+```bash
+pandoc resume.md -s --toc --toc-depth=3 --template=pandoc-templates/rich.html --metadata title="Dmitry Ivanov" --embed-resources -o /tmp/resume_rich.html
+```
+
+**PDF:**
+```bash
+pandoc resume.md -s --toc --toc-depth=3 -t html --pdf-engine=wkhtmltopdf --template=pandoc-templates/simple.html --metadata title="Dmitry Ivanov" -o /tmp/resume.pdf
+```
+
+**ODT:**
+```bash
+pandoc resume.md -s --toc --toc-depth=3 -t odt --template=pandoc-templates/default.opendocument -o /tmp/resume.odt
+```
+
+**DOCX:**
+```bash
+pandoc resume.md -s --toc --toc-depth=3 --template=pandoc-templates/default.ms -o /tmp/resume.docx
+```
+
+### CI Pipeline (`.github/workflows/ci.yml`)
+- Triggers on push/PR to `main`/`dev` branches
+- Generates all 6 output formats
+- Uploads artifacts as GitHub Release
+- Tests all generated files for existence and non-emptiness
+- Uploads to GitHub Releases on manual workflow dispatch from `main`
+
+### Notes
+- All HTML generation uses `-s --toc --toc-depth=3 --embed-resources` flags
+- PDF generation uses `simple.html` template (embedded CSS works better with wkhtmltopdf)
+- ODT and DOCX use stock pandoc templates (`default.opendocument`, `default.ms`)
+- `--embed-resources` ensures images and CSS are embedded for offline viewing
+- The `--toc --toc-depth=3` flag generates a 3-level table of contents
+
