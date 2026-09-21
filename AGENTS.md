@@ -4,13 +4,13 @@
 
 ## Overview
 A collection of templates for generating documents via Pandoc.
-Current templates: `default.ms`, `default.opendocument`, `sidebar-green-template.html`.
+Current templates: `default.ms`, `default.opendocument`, `rich.html`, `simple.html`.
 
 ## Goal
 Add a new HTML template based on **Bootstrap 5** for generating clean, responsive documents from Markdown via Pandoc.
-The working template is 'pandoc-templates/sidebar-green-template.html'. It includes a 3-button switch with 'light', 'dark' and 'yellow' (light, sight relaxing) themes, with yellow as the default.
+The working template is 'pandoc-templates/rich.html'. It includes a 3-button switch with 'light', 'dark' and 'yellow' (light, sight relaxing) themes, with yellow as the default.
 
-The 'sidebar-green-template.html' has been fully implemented with all UI features and is the working template. Target markdown document is `./resume.md`.
+The 'rich.html' has been fully implemented with all UI features and is the working template. Target markdown document is `./resume.md`.
 
 ## Skills
 This project uses two skills, both loaded from `.agents/skills/`.
@@ -31,16 +31,17 @@ OpenCode auto-discovers them by scanning for `SKILL.md` files in this directory.
 
 ## Rules
 - New templates go into `pandoc-templates/`.
-- Working template: `pandoc-templates/sidebar-green-template.html`.
+- Working template: `pandoc-templates/rich.html`.
+- Simple template: `pandoc-templates/simple.html`.
 - The template must use standard Pandoc variables: `$title$`, `$body$`, `$toc$`.
-- `sidebar-green-template.html` should NOT be treated as read-only - it has been explicitly modified by the user with UI features and should be treated as the working template.
+- `rich.html` should NOT be treated as read-only - it has been explicitly modified by the user with UI features and should be treated as the working template.
 - Do not modify existing templates (`default.ms`, `default.opendocument`) unless explicitly asked.
 - Always use standard Bootstrap's stylesheets for any HTML code.
 - Any exceptional changes to Bootstrap styles wanted by user should be implemented in a 'diff' approach only to that case. Try to change common style instead of creating a new one.
 - Do not create your own stylesheets until you can not implement it with Bootstrap's common stylesheets.
 - Any style or script should be included into webpage to get offline viewer experience. Use 'pandoc --embed-resources=true' to reach that.
 - Do not manipulate with git without explicit user command to add\delete new\outdated files under version control.
-- The temporary file to view current changes is file:///tmp/resume_bootstrap.html . Always generate it to show your work results.
+- The temporary file to view current changes is `file:///tmp/resume_rich.html`. Always generate it to show your work results.
 - Use CDN if possible to pull scripts & stylesheets during document generation.
 - Embed any necessary style or necessary scripts into the pandoc template.
 - Always generate output document based on your outcome aside of gitlab CI pipelines.
@@ -66,14 +67,14 @@ User mode access.
 
 Target markdown template ./resume.md
  
-There is 100% working html template ./pandoc-templates/sidebar-green-template.html 
+There is 100% working html template ./pandoc-templates/rich.html
 
 ### Template Usage
 - Consult `.agents/skills/` for skill documentation before creating or modifying templates.
 
 ## UI Preferences & Design Decisions
 
-### Template: `sidebar-green-template.html`
+### Template: `rich.html`
 
 This template is the fully implemented working template with all UI features. Do not treat it as read-only - it has been explicitly modified by the user.
 
@@ -105,6 +106,7 @@ This template is the fully implemented working template with all UI features. Do
 - `transition` on `#sidebar` and `#content` for smooth animations
 
 #### Generation
-- Preview always generated at `/tmp/resume_bootstrap.html`
-- Command: `pandoc resume.md -s --template=pandoc-templates/sidebar-green-template.html --toc --toc-depth=3 --metadata title="..." -o /tmp/resume_bootstrap.html`
+- Preview always generated at `/tmp/resume_rich.html`
+- Command: `pandoc resume.md -s --template=pandoc-templates/rich.html --toc --toc-depth=3 --metadata title="..." -o /tmp/resume_rich.html`
+- Build script `build_resume.sh` generates both `{basename}_simple.html` and `{basename}_rich.html`
 

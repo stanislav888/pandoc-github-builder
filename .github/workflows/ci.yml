@@ -30,7 +30,8 @@ jobs:
       FILE_PDF: ${{ steps.set-names.outputs.FILE_PDF }}
       FILE_ODT: ${{ steps.set-names.outputs.FILE_ODT }}
       FILE_DOCX: ${{ steps.set-names.outputs.FILE_DOCX }}
-      FILE_HTML_LIVE: ${{ steps.set-names.outputs.FILE_HTML_LIVE }}
+      FILE_HTML_SIMPLE: ${{ steps.set-names.outputs.FILE_HTML_SIMPLE }}
+      FILE_HTML_RICH: ${{ steps.set-names.outputs.FILE_HTML_RICH }}
       HTML_TEMPLATE_FILE: ${{ steps.get-vars.outputs.HTML_TEMPLATE_FILE }}
       ODT_TEMPLATE_FILE: ${{ steps.get-vars.outputs.ODT_TEMPLATE_FILE }}
       DOCX_TEMPLATE_FILE: ${{ steps.get-vars.outputs.DOCX_TEMPLATE_FILE }}
@@ -54,6 +55,7 @@ jobs:
         id: get-vars
         run: |
           echo "HTML_TEMPLATE_FILE=${{ env.HTML_TEMPLATE_FILE }}" >> $GITHUB_OUTPUT
+          echo "RICH_TEMPLATE_FILE=${{ env.RICH_TEMPLATE_FILE }}" >> $GITHUB_OUTPUT
           echo "ODT_TEMPLATE_FILE=${{ env.ODT_TEMPLATE_FILE }}" >> $GITHUB_OUTPUT
           echo "DOCX_TEMPLATE_FILE=${{ env.DOCX_TEMPLATE_FILE }}" >> $GITHUB_OUTPUT
           echo "INPUT_FILE=${{ env.INPUT_FILE }}" >> $GITHUB_OUTPUT
@@ -66,7 +68,8 @@ jobs:
           echo "FILE_PDF=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.pdf" >> $GITHUB_OUTPUT
           echo "FILE_ODT=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.odt" >> $GITHUB_OUTPUT
           echo "FILE_DOCX=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.docx" >> $GITHUB_OUTPUT
-          echo "FILE_HTML_LIVE=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}_live.html" >> $GITHUB_OUTPUT
+          echo "FILE_HTML_SIMPLE=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}_simple.html" >> $GITHUB_OUTPUT
+          echo "FILE_HTML_RICH=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}_rich.html" >> $GITHUB_OUTPUT
 
       - name: Validate environment variables from settings.env.txt 
         run: |
@@ -106,8 +109,10 @@ jobs:
       FILE_PDF: ${{ needs.setup-file-names.outputs.FILE_PDF }}
       FILE_ODT: ${{ needs.setup-file-names.outputs.FILE_ODT }}
       FILE_DOCX: ${{ needs.setup-file-names.outputs.FILE_DOCX }}
-      FILE_HTML_LIVE: ${{ needs.setup-file-names.outputs.FILE_HTML_LIVE }}
+      FILE_HTML_SIMPLE: ${{ needs.setup-file-names.outputs.FILE_HTML_SIMPLE }}
+      FILE_HTML_RICH: ${{ needs.setup-file-names.outputs.FILE_HTML_RICH }}
       HTML_TEMPLATE_FILE: ${{ needs.setup-file-names.outputs.HTML_TEMPLATE_FILE }}
+      RICH_TEMPLATE_FILE: ${{ needs.setup-file-names.outputs.RICH_TEMPLATE_FILE }}
       ODT_TEMPLATE_FILE: ${{ needs.setup-file-names.outputs.ODT_TEMPLATE_FILE }}
       DOCX_TEMPLATE_FILE: ${{ needs.setup-file-names.outputs.DOCX_TEMPLATE_FILE }}
       INPUT_FILE: ${{ needs.setup-file-names.outputs.INPUT_FILE }}
@@ -159,14 +164,24 @@ jobs:
             -o ${FILE_PDF} \
             -f ${INPUT_FORMAT}
 
-      - name: Generate HTML (live)
+      - name: Generate HTML (simple)
         run: |
           /usr/bin/pandoc ${INPUT_FILE} \
             -s \
             --toc \
             --template="${HTML_TEMPLATE_FILE}" \
             --metadata title="${FILE_BASENAME}" \
-            -o ${FILE_HTML_LIVE} \
+            -o ${FILE_HTML_SIMPLE} \
+            -f ${INPUT_FORMAT}
+
+      - name: Generate HTML (rich)
+        run: |
+          /usr/bin/pandoc ${INPUT_FILE} \
+            -s \
+            --toc \
+            --template="${RICH_TEMPLATE_FILE}" \
+            --metadata title="${FILE_BASENAME}" \
+            -o ${FILE_HTML_RICH} \
             -f ${INPUT_FORMAT}
 
       - name: Generate ODT
@@ -211,8 +226,11 @@ jobs:
           - name: ODT
             var: FILE_ODT
             check_size: true
-          - name: HTML (live)
-            var: FILE_HTML_LIVE
+          - name: HTML (simple)
+            var: FILE_HTML_SIMPLE
+            check_size: true
+          - name: HTML (rich)
+            var: FILE_HTML_RICH
             check_size: true
 
     steps:
@@ -284,5 +302,6 @@ jobs:
             ./release/*.pdf
             ./release/*.docx
             ./release/*.odt
-            ./release/*.html
+            ./release/*_simple.html
+            ./release/*_rich.html
           fail_on_unmatched_files: true
