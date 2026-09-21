@@ -308,8 +308,8 @@
     </div>
 
     <script>
-        function getStorage() {
-            try { return localStorage.getItem('pandoc-theme'); } catch(e) { return null; }
+        function getStorage(key) {
+            try { return localStorage.getItem(key); } catch(e) { return null; }
         }
         function setStorage(key, value) {
             try { localStorage.setItem(key, value); } catch(e) {}
@@ -332,19 +332,18 @@
                     setTheme(btn.getAttribute('data-theme-btn'));
                 });
             });
-            var initial = getStorage() || '$default_theme$';
-            document.documentElement.setAttribute('data-theme', initial);
+            var defaultTheme = '$default_theme$';
+            document.documentElement.setAttribute('data-theme', defaultTheme);
             btns.forEach(function(btn) {
                 btn.classList.remove('active-theme');
-                if (btn.getAttribute('data-theme-btn') === initial) {
+                if (btn.getAttribute('data-theme-btn') === defaultTheme) {
                     btn.classList.add('active-theme');
                 }
             });
 
             var showToc = '$show_toc$';
             var sidebarBtn = document.getElementById('sidebarToggleBtn');
-            var sidebarToggleStorage = getStorage('sidebar-toggle');
-            if (sidebarToggleStorage === 'collapsed' || (showToc !== 'true' && sidebarToggleStorage !== 'open')) {
+            if (showToc !== 'true') {
                 document.body.classList.add('sidebar-collapsed');
             }
             sidebarBtn.innerHTML = document.body.classList.contains('sidebar-collapsed') ? 'Show TOC' : 'Hide TOC';
