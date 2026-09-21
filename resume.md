@@ -1,23 +1,23 @@
-# Dmitry Ivanov
+## Dmitry Ivanov
+(not a real person resume) 
+
 ## C++ Software Development Engineer
 
 > *"Clean code, high performance, and modern C++ — my professional motto."*
 
 ---
 
-## 📫 Contact
+##  Contact
 
-- **Email:** dmitry.ivanov@example.com
-- **GitHub:** [github.com/divanov](https://github.com/divanov)
-- **Telegram:** @dmitry_dev
-- **LinkedIn:** [linkedin.com/in/dmitry-ivanov](https://linkedin.com/in/dmitry-ivanov)
-- **Location:** Moscow, Russia
-
-[Back to top](#dmitry-ivanov)
+- **Email:** dmitry.ivanov@example.com  
+- **GitHub:** [github.com/divanov](https://github.com/divanov)  
+- **Telegram:** @dmitry_dev  
+- **LinkedIn:** [linkedin.com/in/dmitry-ivanov](https://linkedin.com/in/dmitry-ivanov)  
+- **Location:** Moscow, Russia  
 
 ---
 
-## 🎯 Professional Summary
+##  Professional Summary
 
 Results-driven **C++ Software Engineer** with **8+ years** of experience in:
 
@@ -33,11 +33,11 @@ Proven track record in:
 | Telecom  | SS7 stack optimization |
 | GameDev  | Multiplayer RPG core logic |
 
-> ⚡ Passionate about **clean code**, **performance optimization**, and modern **C++17/20**.
+>  Passionate about **clean code**, **performance optimization**, and modern **C++17/20**.
 
 ---
 
-## 🧠 Core Competencies
+##  Core Competencies
 
 ### Languages & Technologies
 - **C++** (11/14/17/20) — advanced
@@ -70,7 +70,7 @@ public:
 
 ---
 
-## 💼 Work Experience
+##  Work Experience
 
 ### **Senior C++ Developer** | **FinTech Corp** | 2022 – Present
 
@@ -82,10 +82,10 @@ public:
 
 **Achievements:**
 
-- ✅ Designed a **high‑frequency trading (HFT) engine** with latency **<10µs**
-- ✅ Optimized network stack, reducing overall latency by **30%**
-- ✅ Integrated **Google Benchmark** and **Sanitizers**, increasing stability to **99.99%**
-- ✅ Implemented a **lock‑free MPSC queue** achieving **3M ops/sec**
+-  Designed a **high‑frequency trading (HFT) engine** with latency **<10µs**
+-  Optimized network stack, reducing overall latency by **30%**
+-  Integrated **Google Benchmark** and **Sanitizers**, increasing stability to **99.99%**
+-  Implemented a **lock‑free MPSC queue** achieving **3M ops/sec**
 
 ---
 
@@ -96,7 +96,7 @@ public:
 - Set up a **CI/CD pipeline (GitLab)** for automated testing and deployment
 - Participated in **migration from C++14 to C++20**, gaining a **20% performance boost**
 
-> 💡 **Insight:** The migration to C++20 reduced compilation time by 35% and improved code readability through concepts and ranges.
+>  **Insight:** The migration to C++20 reduced compilation time by 35% and improved code readability through concepts and ranges.
 
 ---
 
@@ -108,7 +108,7 @@ public:
 
 ---
 
-## 🎓 Education
+##  Education
 
 ### **M.Sc. in Computer Science**
 *Moscow Institute of Physics and Technology (MIPT)*  
@@ -125,7 +125,7 @@ public:
 
 ---
 
-## 📜 Certifications
+##  Certifications
 
 | Certification | Year | Issuer |
 |---------------|------|--------|
@@ -136,12 +136,12 @@ public:
 
 ---
 
-## 🛠️ Notable Projects
+##  Notable Projects
 
 ### 1. **Lock‑free Queue Library**
 - Header‑only C++17 library with **MPSC** and **SPSC** queues
 - Benchmark shows **2.5x speedup** over `std::queue` with mutex
-- 📎 [github.com/divanov/lfqueue](https://github.com/divanov/lfqueue)
+-  [github.com/divanov/lfqueue](https://github.com/divanov/lfqueue)
 
 ### 2. **Async REST Client**
 - Built on **Boost.Asio** with connection pooling and retry logic
@@ -160,15 +160,15 @@ assert(response.status_code == 200);
 
 ---
 
-## 🏆 Achievements
+##  Achievements
 
-- 🎤 **Speaker** at C++ Russia 2023: *Lock‑free data structures in finance*
-- 👥 **Organizer** of Moscow C++ Meetup (2021–2024)
-- 📝 **Author** of 5+ technical articles on Habr (40K+ total reads)
+-  **Speaker** at C++ Russia 2023: *Lock‑free data structures in finance*
+-  **Organizer** of Moscow C++ Meetup (2021–2024)
+-  **Author** of 5+ technical articles on Habr (40K+ total reads)
 
 ---
 
-## 📄 Languages
+##  Languages
 
 | Language | Proficiency |
 |----------|-------------|
@@ -177,7 +177,7 @@ assert(response.status_code == 200);
 
 ---
 
-## 🧩 References
+##  References
 
 Available upon request.
 
