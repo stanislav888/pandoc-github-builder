@@ -20,6 +20,8 @@ case "$key" in
         INPUT_FILE) INPUT_FILE="$value" ;;
         HTML_TEMPLATE_FILE) HTML_TEMPLATE_FILE="$value" ;;
         RICH_TEMPLATE_FILE) RICH_TEMPLATE_FILE="$value" ;;
+        SHOW_TOC) SHOW_TOC="$value" ;;
+        DEFAULT_THEME) DEFAULT_THEME="$value" ;;
         ODT_TEMPLATE_FILE) ODT_TEMPLATE_FILE="$value" ;;
         DOCX_TEMPLATE_FILE) DOCX_TEMPLATE_FILE="$value" ;;
     esac
@@ -29,6 +31,8 @@ INPUT_FILE="${INPUT_FILE:-./resume.md}"
 FILE_BASENAME="${FILE_BASENAME:-resume}"
 HTML_TEMPLATE_FILE="${HTML_TEMPLATE_FILE:-${SCRIPT_DIR}/pandoc-templates/simple.html}"
 RICH_TEMPLATE_FILE="${RICH_TEMPLATE_FILE:-${SCRIPT_DIR}/pandoc-templates/rich.html}"
+SHOW_TOC="${SHOW_TOC:-true}"
+DEFAULT_THEME="${DEFAULT_THEME:-yellow}"
 ODT_TEMPLATE_FILE="${ODT_TEMPLATE_FILE:-./pandoc-templates/default.opendocument}"
 DOCX_TEMPLATE_FILE="${DOCX_TEMPLATE_FILE:-./pandoc-templates/default.ms}"
 INPUT_FORMAT="markdown"
@@ -78,6 +82,8 @@ pandoc "$INPUT_FILE" \
     --toc-depth=3 \
     --template="$HTML_TEMPLATE_FILE" \
     --metadata title="$FILE_BASENAME" \
+    --metadata show_toc="$SHOW_TOC" \
+    --metadata default_theme="$DEFAULT_THEME" \
     --embed-resources \
     -o "$HTML_SIMPLE" \
     -f "$INPUT_FORMAT"
@@ -91,6 +97,8 @@ pandoc "$INPUT_FILE" \
     --toc-depth=3 \
     --template="$RICH_TEMPLATE_FILE" \
     --metadata title="$FILE_BASENAME" \
+    --metadata show_toc="$SHOW_TOC" \
+    --metadata default_theme="$DEFAULT_THEME" \
     --embed-resources \
     -o "$HTML_RICH" \
     -f "$INPUT_FORMAT"
@@ -106,6 +114,8 @@ if [ "$HAS_WKHTML" = true ]; then
         --pdf-engine=wkhtmltopdf \
         --template="$HTML_TEMPLATE_FILE" \
         --metadata title="$FILE_BASENAME" \
+        --metadata show_toc="$SHOW_TOC" \
+        --metadata default_theme="$DEFAULT_THEME" \
         --embed-resources \
         -o "$PDF_OUTPUT" \
         -f "$INPUT_FORMAT"
@@ -120,6 +130,8 @@ echo "--- Generating ODT ---"
 pandoc "$INPUT_FILE" \
     -t odt \
     --template="$ODT_TEMPLATE_FILE" \
+    --metadata show_toc="$SHOW_TOC" \
+    --metadata default_theme="$DEFAULT_THEME" \
     -o "$ODT_OUTPUT" \
     -f "$INPUT_FORMAT"
 echo "  -> $ODT_OUTPUT"
@@ -128,6 +140,8 @@ echo ""
 echo "--- Generating DOCX ---"
 pandoc "$INPUT_FILE" \
     --template="$DOCX_TEMPLATE_FILE" \
+    --metadata show_toc="$SHOW_TOC" \
+    --metadata default_theme="$DEFAULT_THEME" \
     -o "$DOCX_OUTPUT" \
     -f "$INPUT_FORMAT"
 echo "  -> $DOCX_OUTPUT"

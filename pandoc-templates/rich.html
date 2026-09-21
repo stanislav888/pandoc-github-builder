@@ -332,7 +332,7 @@
                     setTheme(btn.getAttribute('data-theme-btn'));
                 });
             });
-            var initial = getStorage() || 'yellow';
+            var initial = getStorage() || '$default_theme$';
             document.documentElement.setAttribute('data-theme', initial);
             btns.forEach(function(btn) {
                 btn.classList.remove('active-theme');
@@ -341,9 +341,10 @@
                 }
             });
 
+            var showToc = '$show_toc$';
             var sidebarBtn = document.getElementById('sidebarToggleBtn');
             var sidebarToggleStorage = getStorage('sidebar-toggle');
-            if (sidebarToggleStorage === 'collapsed') {
+            if (sidebarToggleStorage === 'collapsed' || (showToc !== 'true' && sidebarToggleStorage !== 'open')) {
                 document.body.classList.add('sidebar-collapsed');
             }
             sidebarBtn.innerHTML = document.body.classList.contains('sidebar-collapsed') ? 'Show TOC' : 'Hide TOC';

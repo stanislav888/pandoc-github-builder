@@ -61,6 +61,8 @@ jobs:
           echo "INPUT_FILE=${{ env.INPUT_FILE }}" >> $GITHUB_OUTPUT
           echo "INPUT_FORMAT=${{ env.INPUT_FORMAT }}" >> $GITHUB_OUTPUT
           echo "FILE_BASENAME=${{ env.FILE_BASENAME }}" >> $GITHUB_OUTPUT
+          echo "SHOW_TOC=${{ env.SHOW_TOC }}" >> $GITHUB_OUTPUT
+          echo "DEFAULT_THEME=${{ env.DEFAULT_THEME }}" >> $GITHUB_OUTPUT
 
       - name: Generate file names
         id: set-names
@@ -161,6 +163,8 @@ jobs:
             --pdf-engine=wkhtmltopdf \
             --template="${HTML_TEMPLATE_FILE}" \
             --metadata title="${FILE_BASENAME}" \
+            --metadata show_toc="${SHOW_TOC}" \
+            --metadata default_theme="${DEFAULT_THEME}" \
             -o ${FILE_PDF} \
             -f ${INPUT_FORMAT}
 
@@ -171,6 +175,8 @@ jobs:
             --toc \
             --template="${HTML_TEMPLATE_FILE}" \
             --metadata title="${FILE_BASENAME}" \
+            --metadata show_toc="${SHOW_TOC}" \
+            --metadata default_theme="${DEFAULT_THEME}" \
             -o ${FILE_HTML_SIMPLE} \
             -f ${INPUT_FORMAT}
 
@@ -181,6 +187,8 @@ jobs:
             --toc \
             --template="${RICH_TEMPLATE_FILE}" \
             --metadata title="${FILE_BASENAME}" \
+            --metadata show_toc="${SHOW_TOC}" \
+            --metadata default_theme="${DEFAULT_THEME}" \
             -o ${FILE_HTML_RICH} \
             -f ${INPUT_FORMAT}
 
@@ -189,6 +197,8 @@ jobs:
           /usr/bin/pandoc ${INPUT_FILE} \
             -t odt \
             --template="${ODT_TEMPLATE_FILE}" \
+            --metadata show_toc="${SHOW_TOC}" \
+            --metadata default_theme="${DEFAULT_THEME}" \
             -o ${FILE_ODT} \
             -f ${INPUT_FORMAT}
 
@@ -196,6 +206,8 @@ jobs:
         run: |
           /usr/bin/pandoc ${INPUT_FILE} \
             --template="${DOCX_TEMPLATE_FILE}" \
+            --metadata show_toc="${SHOW_TOC}" \
+            --metadata default_theme="${DEFAULT_THEME}" \
             -o ${FILE_DOCX} \
             -f ${INPUT_FORMAT}
 
