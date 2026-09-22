@@ -15,7 +15,7 @@ git clone https://github.com/<YOUR_GITHUB_USERNAME>/pandoc-github-builder.git
 cd pandoc-github-builder
 ```
 
-Alternatively, use the GitHub web editor to edit all files below.
+Alternatively, use the GitHub web editor to edit all the files within your fork.
 
 ### 3. Replace the resume content
 
@@ -47,33 +47,39 @@ Any intermediate version can be downloaded from artifacts; no release required.
 
 ---
 
-## Publishing a Release and Deploying to Pages (Manual)
+## Publishing a Release and Deploying to Pages
 
-Both the *Release* and the *GitHub Pages* deployments are triggered manually from the GitHub web interface. A regular push to `main` or `dev` only builds and tests artifacts; **it does not publish anything**.
+Both publishing jobs run automatically as part of the workflow on the `main` branch. No manual trigger is required. Pushes to `dev` only build and test artifacts; they do not publish anything. Download them as described at #6 above.
 
 ### Release
 
-1. Go to **Actions** → **Build Resume** → **Run workflow** (select the `main` branch).
-2. After completion, a `resume-latest` release appears under **Releases**.
+When the workflow runs on the `main` branch, the `upload-release` job creates or overwrites the `resume-latest` release under **Releases**.
 
-The release contains all formats: PDF, DOCX, ODT, HTML. Each manual run overwrites the previous release — only the latest version is kept.
-
-The release job runs only when the workflow is started manually from the **Actions** tab in the GitHub interface on the `main` branch. It is skipped on regular pushes and on pull requests.
+The release contains all formats: PDF, DOCX, ODT, HTML. Each run overwrites the previous release — only the latest version is kept.
 
 ### Deploy to GitHub Pages
 
-The `deploy-pages` job publishes the generated HTML resume to GitHub Pages and prints direct links to all generated files in the workflow log. It runs as part of the same manual workflow run that produces the release, also started from the **Actions** tab in the GitHub interface.
+When the workflow runs on the `main` branch, the `deploy-pages` job publishes the generated HTML resume to GitHub Pages and prints direct links to all generated files in the workflow log.
 
 Before the first deployment, GitHub Pages must be enabled and the deployment branches must be allowed. This is a one-time setup per repository.
 
 1. Go to **Settings** → **Pages**.
 2. Set **Source** to **GitHub Actions**.
 3. Go to **Settings** → **Environments** → **github-pages** → **Deployment branches and tags**.
-4. Add a rule for each branch you want to deploy from, for example `main` and `dev`.
-
-After this setup, the `deploy-pages` job publishes the contents of the `release/` folder to `https://<username>.github.io/<repository>/`. Every generated file becomes available at a direct URL formed as `<page-url>/<file-name>`, for example `https://<username>.github.io/<repository>/Your_Name_Position_Resume_rich.html`. The workflow log lists the root URL and direct links to the HTML, PDF, DOCX, and ODT files.
+4. Add a rule for the `main` branch.
 
 Without these settings, the `deploy-pages` job fails with `Get Pages site failed` or `Branch ... is not allowed to deploy`.
+
+After this setup, the `deploy-pages` job publishes the contents of the `release/` folder to `https://<username>.github.io/<repository>/`. Every generated file becomes available at a direct URL formed as `<page-url>/<file-name>`, for example `https://<username>.github.io/<repository>/<file_basename>_rich.html`. The workflow log lists the root URL and the direct links to all the files.
+
+The log example
+```log
+Root URL:       https://stanislav888.github.io/pandoc-github-builder/
+Resume (HTML):  https://stanislav888.github.io/pandoc-github-builder/Dmitry_Ivanov_C++_Software_Developer_resume_rich.html
+Resume (PDF):   https://stanislav888.github.io/pandoc-github-builder/Dmitry_Ivanov_C++_Software_Developer_resume.pdf
+Resume (DOCX):  https://stanislav888.github.io/pandoc-github-builder/Dmitry_Ivanov_C++_Software_Developer_resume.docx
+Resume (ODT):   https://stanislav888.github.io/pandoc-github-builder/Dmitry_Ivanov_C++_Software_Developer_resume.odt
+```
 
 ---
 
@@ -100,16 +106,13 @@ Without these settings, the `deploy-pages` job fails with `Get Pages site failed
 3. Pandoc and wkhtmltopdf are installed on a GitHub virtual machine.
 4. All document formats are generated inside the virtual machine.
 5. Artifacts are saved (available for 7 days).
-6. A manual release (optional) publishes to GitHub Releases.
-7. A manual `deploy-pages` job (optional) deploys the HTML resume to GitHub Pages and prints direct links.
+6. Deployment jobs runs in case of the `main` branch
 
 ---
 
 ## 📝 Templates
 
-This project uses the **Pandoc template format**. The HTML templates (`rich.html`, `pdf.html`) were generated with the assistance of an AI chatbot.
-
-Templates are sourced from the Pandoc distribution:
+This project uses the **Pandoc template format**. 
 
 | Template | Source | License |
 |----------|--------|---------|
@@ -117,6 +120,8 @@ Templates are sourced from the Pandoc distribution:
 | `pdf.html` | Custom (AI‑generated) | MIT |
 | `default.opendocument` | Pandoc stock | GPL-2.0-or-later |
 | `default.ms` | Pandoc stock | GPL-2.0-or-later |
+
+## License
 
 All original content in this repository is distributed under the **MIT License** (`SPDX: MIT`).
 
@@ -130,4 +135,4 @@ All original content in this repository is distributed under the **MIT License**
 
 ---
 
-> **P.S.** This is a home lab for training CI/CD skills in GitHub Actions.
+> **P.S.** This is a home lab for training CI/CD skills in GitHub Actions and the AI automated  coding. 
