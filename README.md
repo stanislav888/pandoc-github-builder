@@ -10,6 +10,13 @@ A collection of templates for generating documents via Pandoc from Markdown sour
 | `default.opendocument` | Stock ODT template |
 | `default.ms` | Stock DOCX template |
 
+## Features of the `rich.html` template
+
+- **3-Button Theme Control**: Light, Dark, Yellow (default)
+- **Sidebar Toggle**: "Hide TOC" / "Show TOC" button
+- **Responsive Design**: Bootstrap 5 grid system
+- **Offline Viewer**: `pandoc --embed-resources` embeds all assets into the html file 
+
 ## Quick Start
 
 ### Build all documents from Markdown
@@ -39,44 +46,19 @@ Edit `settings.env.txt` to configure:
 - `ODT_TEMPLATE_FILE` - Template for ODT format (default: `./pandoc-templates/default.opendocument`)
 - `DOCX_TEMPLATE_FILE` - Template for DOCX format (default: `./pandoc-templates/default.ms`)
 
-## Manual Generation
-
-**HTML Rich:**
-```bash
-pandoc resume.md -s --toc --toc-depth=3 --template=pandoc-templates/rich.html --metadata title="Title" --metadata show_toc=true -o output.html
-```
-
-**PDF:**
-```bash
-pandoc resume.md -s --toc --toc-depth=3 -t html --pdf-engine=wkhtmltopdf --template=pandoc-templates/rich.html --metadata title="Title" --metadata show_toc=true -o output.pdf
-```
-
-**ODT:**
-```bash
-pandoc resume.md -s -t odt --template=pandoc-templates/default.opendocument -o output.odt
-```
-
-**DOCX:**
-```bash
-pandoc resume.md -s --template=pandoc-templates/default.ms -o output.docx
-```
-
 ## CI Pipeline
 
 See `.github/workflows/ci.yml` for the GitHub Actions pipeline that generates all formats on push/PR, validates settings, deploys to GitHub Pages, and uploads to GitHub Releases.
 
-## Features of `rich.html`
+## Hyperlinks to Resume Files
 
-- **3-Button Theme Control**: Light, Dark, Yellow (default)
-- **Sidebar Toggle**: "Hide TOC" / "Show TOC" button
-- **CSS Custom Properties**: All themes driven by `--*` variables
-- **localStorage Persistence**: Theme and sidebar state saved
-- **Responsive Design**: Bootstrap 5 grid system
-- **Offline Viewer**: `--embed-resources` embeds all assets
+At the `deploy-pages` step of the CI pipeline, the direct links to each generated file are printed in the build logs:
 
-## Development
+For instance:  
 
-- Target markdown source: `./resume.md`
-- Working template: `pandoc-templates/rich.html`
-- Preview output: `/tmp/pandoc_builder/{basename}_rich.html`
-- See `AGENTS.md` for detailed UI preferences and design decisions
+Resume (HTML):  [https://stanislav888.github.io/pandoc-github-builder/Dmitry_Ivanov_C++_Software_Developer_resume_rich.html](https://stanislav888.github.io/pandoc-github-builder/Dmitry_Ivanov_C++_Software_Developer_resume_rich.html)  
+Resume (PDF):   [https://stanislav888.github.io/pandoc-github-builder/Dmitry_Ivanov_C++_Software_Developer_resume.pdf](https://stanislav888.github.io/pandoc-github-builder/Dmitry_Ivanov_C++_Software_Developer_resume.pdf)  
+Resume (DOCX):  [https://stanislav888.github.io/pandoc-github-builder/Dmitry_Ivanov_C++_Software_Developer_resume.docx](https://stanislav888.github.io/pandoc-github-builder/Dmitry_Ivanov_C++_Software_Developer_resume.docx)  
+Resume (ODT):   [https://stanislav888.github.io/pandoc-github-builder/Dmitry_Ivanov_C++_Software_Developer_resume.odt](https://stanislav888.github.io/pandoc-github-builder/Dmitry_Ivanov_C++_Software_Developer_resume.odt)  
+
+
