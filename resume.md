@@ -1,5 +1,5 @@
 ## Dmitry Ivanov
-(not a real person resume) 
+(an example, not a real person resume) 
 
 ## C++ Software Development Engineer
 
@@ -9,11 +9,11 @@
 
 ##  Contact
 
-- **Email:** dmitry.ivanov@example.com  
-- **GitHub:** [github.com/divanov](https://github.com/divanov)  
-- **Telegram:** @dmitry_dev  
-- **LinkedIn:** [linkedin.com/in/dmitry-ivanov](https://linkedin.com/in/dmitry-ivanov)  
-- **Location:** Moscow, Russia  
+- **Email:** dmitry.ivanov111@example.com  
+- **GitHub:** [github.com/divanov111](https://github.com/divanov111)  
+- **Telegram:** @dmitry_dev111  
+- **LinkedIn:** [linkedin.com/in/dmitry-ivanov111](https://linkedin.com/in/dmitry-ivanov111)  
+- **Location:** Minsk, Belarus  
 
 ---
 
