@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -78,7 +78,7 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* === Sidebar === */
+        /* === Desktop Layout (> 768px) === */
         #sidebar {
             position: fixed;
             left: 0;
@@ -91,8 +91,110 @@
             box-shadow: 2px 0 10px var(--color-shadow);
             overflow-y: auto;
             transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+            z-index: 1040;
         }
 
+        #content {
+            margin-left: 290px;
+            padding: 20px;
+            background-color: var(--bg-content);
+            min-height: 100vh;
+            transition: background-color 0.3s ease, margin-left 0.3s ease;
+        }
+
+        /* === Desktop Control Buttons === */
+        .controls-desktop {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 1050;
+        }
+
+        .controls-desktop .btn {
+            background-color: var(--bg-body);
+            color: var(--color-text);
+            border-color: var(--color-heading-accent);
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .controls-desktop .btn:hover {
+            background-color: var(--bg-content);
+        }
+
+        .controls-desktop .btn.active-theme {
+            box-shadow: 0 0 0 2px var(--color-heading-accent);
+        }
+
+        /* === Mobile Control Buttons === */
+        .controls-mobile .btn {
+            background-color: var(--bg-sidebar);
+            color: var(--color-sidebar-text);
+            border-color: var(--color-heading-accent);
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        /* === Mobile Layout (<= 768px) === */
+        .controls-mobile {
+            display: none;
+        }
+
+        /* === Mobile Bottom Bar === */
+        @media (max-width: 768px) {
+            .controls-desktop {
+                display: none !important;
+            }
+            .controls-mobile {
+                display: block !important;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                z-index: 1050;
+                background-color: var(--bg-sidebar);
+                padding: 8px 12px;
+                box-shadow: 0 -2px 10px var(--color-shadow);
+            }
+            .controls-mobile .btn {
+                padding: 8px 12px;
+                font-size: 0.8em;
+                margin: 0 2px;
+            }
+            #sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                margin-bottom: 70px;
+                box-shadow: none;
+            }
+            #content {
+                margin-left: 0;
+                padding: 15px;
+                padding-bottom: 70px;
+            }
+        }
+
+        /* === Sidebar Toggle Button === */
+        #sidebarToggleBtn {
+            font-weight: bold;
+        }
+
+        /* === Theme Switcher Buttons === */
+        .theme-switcher .btn {
+            border-radius: 4px;
+            padding: 6px 14px;
+            font-size: 0.85em;
+        }
+
+        /* === Sidebar Collapsed State === */
+        body.sidebar-collapsed #sidebar {
+            transform: translateX(-250px);
+        }
+
+        body.sidebar-collapsed #content {
+            margin-left: 0;
+        }
+
+        /* === Sidebar Content === */
         #sidebar nav {
             font-size: 0.9em;
         }
@@ -144,17 +246,7 @@
             display: block;
         }
 
-        /* === Content === */
-        #content {
-            margin-left: 290px;
-            padding: 20px;
-            background-color: var(--bg-content);
-            min-height: 100vh;
-            box-shadow: 0 0 10px var(--color-shadow);
-            transition: background-color 0.3s ease, margin-left 0.3s ease;
-        }
-
-        /* === Headings === */
+        /* === Content Elements === */
         h1, h2, h3 {
             color: var(--color-heading);
         }
@@ -177,12 +269,10 @@
             margin-bottom: 10px;
         }
 
-        /* === Paragraphs === */
         p {
             margin-bottom: 15px;
         }
 
-        /* === Tables === */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -209,7 +299,6 @@
             background-color: var(--color-table-hover);
         }
 
-        /* === Code === */
         pre {
             background-color: var(--color-code-bg);
             color: var(--color-code-text);
@@ -229,7 +318,6 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* === Links === */
         a {
             color: var(--color-link);
             text-decoration: none;
@@ -239,70 +327,45 @@
             text-decoration: underline;
         }
 
-        /* === Theme Switcher Buttons === */
-        .theme-switcher .btn {
-            border-radius: 4px;
-            padding: 6px 14px;
-            font-size: 0.85em;
-        }
-
-        .theme-switcher .btn.active-theme {
-            box-shadow: 0 0 0 2px var(--color-heading-accent);
-        }
-
-        #sidebarToggleBtn {
-            font-weight: bold;
-        }
-
-        /* === Sidebar Collapsed State === */
-        body.sidebar-collapsed #sidebar {
-            transform: translateX(-250px);
-        }
-
-        body.sidebar-collapsed #content {
-            margin-left: 0;
-        }
-
-        /* === Responsive === */
+        /* === Sidebar Collapsed on Mobile === */
         @media (max-width: 768px) {
-            #sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-                margin-bottom: 20px;
+            body.sidebar-collapsed #sidebar {
+                transform: none;
+                display: none;
             }
-
-            #content {
+            body.sidebar-collapsed #content {
                 margin-left: 0;
-                padding: 15px;
-            }
-
-            .theme-switcher {
-                top: auto;
-                bottom: 15px;
-                right: 15px;
-                left: 15px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Theme Switcher & Sidebar Toggle -->
-    <div class="theme-switcher btn-group" role="group" aria-label="Theme and sidebar controls" style="position: fixed; top: 15px; right: 15px; z-index: 1050;">
+    <!-- Desktop Control Buttons (visible > 768px) -->
+    <div class="controls-desktop theme-switcher btn-group" role="group" aria-label="Theme and sidebar controls" style="position: fixed; top: 15px; right: 15px; z-index: 1050;">
         <button type="button" class="btn btn-outline-secondary" id="sidebarToggleBtn">Hide TOC</button>
         <button type="button" class="btn btn-outline-secondary" data-theme-btn="light">Light</button>
         <button type="button" class="btn btn-outline-secondary" data-theme-btn="dark">Dark</button>
         <button type="button" class="btn btn-outline-secondary" data-theme-btn="yellow">Yellow</button>
     </div>
 
-    <!-- Боковая панель -->
+    <!-- Mobile Control Buttons (visible <= 768px) -->
+    <div class="controls-mobile d-md-none" style="display: none;">
+        <div class="btn-group w-100 justify-content-around" role="group" aria-label="Mobile controls">
+            <button type="button" class="btn btn-outline-light" id="sidebarToggleBtnMobile">TOC</button>
+            <button type="button" class="btn btn-outline-light" data-theme-btn-mobile="light">Light</button>
+            <button type="button" class="btn btn-outline-light" data-theme-btn-mobile="dark">Dark</button>
+            <button type="button" class="btn btn-outline-light" data-theme-btn-mobile="yellow">Yellow</button>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
     <div id="sidebar">
         <nav id="toc">
             $toc$
         </nav>
     </div>
 
-    <!-- Основной контент -->
+    <!-- Content -->
     <div id="content">
         $body$
     </div>
@@ -324,6 +387,9 @@
                 }
             });
             setStorage('pandoc-theme', theme);
+        }
+        function setThemeMobile(theme) {
+            setTheme(theme);
         }
         document.addEventListener('DOMContentLoaded', function() {
             var btns = document.querySelectorAll('[data-theme-btn]');
@@ -353,6 +419,26 @@
                 setStorage('sidebar-toggle', isCollapsed ? 'collapsed' : 'open');
                 sidebarBtn.innerHTML = isCollapsed ? 'Show TOC' : 'Hide TOC';
             });
+
+            /* Mobile theme buttons */
+            var mobileBtns = document.querySelectorAll('[data-theme-btn-mobile]');
+            mobileBtns.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    setThemeMobile(btn.getAttribute('data-theme-btn-mobile'));
+                });
+            });
+
+            /* Mobile sidebar toggle */
+            var sidebarBtnMobile = document.getElementById('sidebarToggleBtnMobile');
+            if (sidebarBtnMobile) {
+                sidebarBtnMobile.innerHTML = document.body.classList.contains('sidebar-collapsed') ? 'Show TOC' : 'Hide TOC';
+                sidebarBtnMobile.addEventListener('click', function() {
+                    document.body.classList.toggle('sidebar-collapsed');
+                    var isCollapsed = document.body.classList.contains('sidebar-collapsed');
+                    setStorage('sidebar-toggle', isCollapsed ? 'collapsed' : 'open');
+                    sidebarBtnMobile.innerHTML = isCollapsed ? 'Show TOC' : 'Hide TOC';
+                });
+            }
         });
     </script>
 </body>

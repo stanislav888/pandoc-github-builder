@@ -20,7 +20,6 @@ on:
 
 env:
   OUTPUT_FOLDER: ./release
-  INPUT_FORMAT: "markdown"
 
 jobs:
   setup-file-names:
@@ -30,13 +29,7 @@ jobs:
       FILE_PDF: ${{ steps.set-names.outputs.FILE_PDF }}
       FILE_ODT: ${{ steps.set-names.outputs.FILE_ODT }}
       FILE_DOCX: ${{ steps.set-names.outputs.FILE_DOCX }}
-      FILE_HTML_SIMPLE: ${{ steps.set-names.outputs.FILE_HTML_SIMPLE }}
       FILE_HTML_RICH: ${{ steps.set-names.outputs.FILE_HTML_RICH }}
-      HTML_TEMPLATE_FILE: ${{ steps.get-vars.outputs.HTML_TEMPLATE_FILE }}
-      ODT_TEMPLATE_FILE: ${{ steps.get-vars.outputs.ODT_TEMPLATE_FILE }}
-      DOCX_TEMPLATE_FILE: ${{ steps.get-vars.outputs.DOCX_TEMPLATE_FILE }}
-      INPUT_FILE: ${{ steps.get-vars.outputs.INPUT_FILE }}
-      INPUT_FORMAT: ${{ steps.get-vars.outputs.INPUT_FORMAT }}
       FILE_BASENAME: ${{ steps.get-vars.outputs.FILE_BASENAME }}
 
     steps:
@@ -54,12 +47,6 @@ jobs:
       - name: Extract template variables
         id: get-vars
         run: |
-          echo "HTML_TEMPLATE_FILE=${{ env.HTML_TEMPLATE_FILE }}" >> $GITHUB_OUTPUT
-          echo "RICH_TEMPLATE_FILE=${{ env.RICH_TEMPLATE_FILE }}" >> $GITHUB_OUTPUT
-          echo "ODT_TEMPLATE_FILE=${{ env.ODT_TEMPLATE_FILE }}" >> $GITHUB_OUTPUT
-          echo "DOCX_TEMPLATE_FILE=${{ env.DOCX_TEMPLATE_FILE }}" >> $GITHUB_OUTPUT
-          echo "INPUT_FILE=${{ env.INPUT_FILE }}" >> $GITHUB_OUTPUT
-          echo "INPUT_FORMAT=${{ env.INPUT_FORMAT }}" >> $GITHUB_OUTPUT
           echo "FILE_BASENAME=${{ env.FILE_BASENAME }}" >> $GITHUB_OUTPUT
           echo "SHOW_TOC=${{ env.SHOW_TOC }}" >> $GITHUB_OUTPUT
           echo "DEFAULT_THEME=${{ env.DEFAULT_THEME }}" >> $GITHUB_OUTPUT
@@ -70,18 +57,12 @@ jobs:
           echo "FILE_PDF=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.pdf" >> $GITHUB_OUTPUT
           echo "FILE_ODT=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.odt" >> $GITHUB_OUTPUT
           echo "FILE_DOCX=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}.docx" >> $GITHUB_OUTPUT
-          echo "FILE_HTML_SIMPLE=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}_simple.html" >> $GITHUB_OUTPUT
           echo "FILE_HTML_RICH=${{ env.OUTPUT_FOLDER }}/${{ env.FILE_BASENAME }}_rich.html" >> $GITHUB_OUTPUT
 
       - name: Validate environment variables from settings.env.txt 
         run: |
-          # List of required variables
           required_vars=(
             "FILE_BASENAME"
-            "INPUT_FILE"
-            "HTML_TEMPLATE_FILE"
-            "ODT_TEMPLATE_FILE"
-            "DOCX_TEMPLATE_FILE"
           )
           
           missing_vars=()
@@ -102,24 +83,18 @@ jobs:
           fi
           
           echo "✅ All required variables are present:"
+          
+          valid_themes=("light" "dark" "yellow")
+          if [[ ! " ${valid_themes[@]} " =~ " ${DEFAULT_THEME} " ]]; then
+            echo "❌ ERROR: DEFAULT_THEME '${DEFAULT_THEME}' is not valid. Must be one of: ${valid_themes[*]}"
+            exit 1
+          fi
+          echo "✅ DEFAULT_THEME is valid: ${DEFAULT_THEME}"
 
   build:
     name: Build Resume
     runs-on: ubuntu-latest
     needs: setup-file-names
-    env:
-      FILE_PDF: ${{ needs.setup-file-names.outputs.FILE_PDF }}
-      FILE_ODT: ${{ needs.setup-file-names.outputs.FILE_ODT }}
-      FILE_DOCX: ${{ needs.setup-file-names.outputs.FILE_DOCX }}
-      FILE_HTML_SIMPLE: ${{ needs.setup-file-names.outputs.FILE_HTML_SIMPLE }}
-      FILE_HTML_RICH: ${{ needs.setup-file-names.outputs.FILE_HTML_RICH }}
-      HTML_TEMPLATE_FILE: ${{ needs.setup-file-names.outputs.HTML_TEMPLATE_FILE }}
-      RICH_TEMPLATE_FILE: ${{ needs.setup-file-names.outputs.RICH_TEMPLATE_FILE }}
-      ODT_TEMPLATE_FILE: ${{ needs.setup-file-names.outputs.ODT_TEMPLATE_FILE }}
-      DOCX_TEMPLATE_FILE: ${{ needs.setup-file-names.outputs.DOCX_TEMPLATE_FILE }}
-      INPUT_FILE: ${{ needs.setup-file-names.outputs.INPUT_FILE }}
-      INPUT_FORMAT: ${{ needs.setup-file-names.outputs.INPUT_FORMAT }}
-      FILE_BASENAME: ${{ needs.setup-file-names.outputs.FILE_BASENAME }}
 
     steps:
       - name: Checkout repository
@@ -156,60 +131,8 @@ jobs:
       - name: Create output directory
         run: mkdir -p ${{ env.OUTPUT_FOLDER }}
 
-      - name: Generate PDF 
-        run: |
-          /usr/bin/pandoc ${INPUT_FILE} \
-            -t html \
-            --pdf-engine=wkhtmltopdf \
-            --template="${HTML_TEMPLATE_FILE}" \
-            --metadata title="${FILE_BASENAME}" \
-            --metadata show_toc="${SHOW_TOC}" \
-            --metadata default_theme="${DEFAULT_THEME}" \
-            -o ${FILE_PDF} \
-            -f ${INPUT_FORMAT}
-
-      - name: Generate HTML (simple)
-        run: |
-          /usr/bin/pandoc ${INPUT_FILE} \
-            -s \
-            --toc \
-            --template="${HTML_TEMPLATE_FILE}" \
-            --metadata title="${FILE_BASENAME}" \
-            --metadata show_toc="${SHOW_TOC}" \
-            --metadata default_theme="${DEFAULT_THEME}" \
-            -o ${FILE_HTML_SIMPLE} \
-            -f ${INPUT_FORMAT}
-
-      - name: Generate HTML (rich)
-        run: |
-          /usr/bin/pandoc ${INPUT_FILE} \
-            -s \
-            --toc \
-            --template="${RICH_TEMPLATE_FILE}" \
-            --metadata title="${FILE_BASENAME}" \
-            --metadata show_toc="${SHOW_TOC}" \
-            --metadata default_theme="${DEFAULT_THEME}" \
-            -o ${FILE_HTML_RICH} \
-            -f ${INPUT_FORMAT}
-
-      - name: Generate ODT
-        run: |
-          /usr/bin/pandoc ${INPUT_FILE} \
-            -t odt \
-            --template="${ODT_TEMPLATE_FILE}" \
-            --metadata show_toc="${SHOW_TOC}" \
-            --metadata default_theme="${DEFAULT_THEME}" \
-            -o ${FILE_ODT} \
-            -f ${INPUT_FORMAT}
-
-      - name: Generate DOCX
-        run: |
-          /usr/bin/pandoc ${INPUT_FILE} \
-            --template="${DOCX_TEMPLATE_FILE}" \
-            --metadata show_toc="${SHOW_TOC}" \
-            --metadata default_theme="${DEFAULT_THEME}" \
-            -o ${FILE_DOCX} \
-            -f ${INPUT_FORMAT}
+      - name: Generate all documents
+        run: bash build_resume.sh ${{ env.OUTPUT_FOLDER }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -237,9 +160,6 @@ jobs:
             check_size: true
           - name: ODT
             var: FILE_ODT
-            check_size: true
-          - name: HTML (simple)
-            var: FILE_HTML_SIMPLE
             check_size: true
           - name: HTML (rich)
             var: FILE_HTML_RICH
@@ -314,6 +234,43 @@ jobs:
             ./release/*.pdf
             ./release/*.docx
             ./release/*.odt
-            ./release/*_simple.html
             ./release/*_rich.html
           fail_on_unmatched_files: true
+
+  deploy-pages:
+    name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: [setup-file-names, build]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
+    permissions:
+      pages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Download rich HTML artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: Resume
+          path: ${{ env.OUTPUT_FOLDER }}
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ env.OUTPUT_FOLDER }}/${{ needs.setup-file-names.outputs.FILE_BASENAME }}_rich.html
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4
+
+      - name: Print Pages URL
+        run: |
+          echo "=========================================="
+          echo "  Resume is live!"
+          echo "=========================================="
+          echo "  URL: https://${{ github.repository_owner }}.github.io/${{ github.repository }}/${{ needs.setup-file-names.outputs.FILE_BASENAME }}_rich.html"
+          echo "=========================================="

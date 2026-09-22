@@ -1,0 +1,30 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "read": {
+      "**": "allow",
+      "~/.bashrc": "allow",
+      "~/.zshrc": "allow",
+      "~/.gitconfig": "allow",
+      "~/.ssh/config": "allow",
+      "~/.config/opencode/**": "allow",
+      "/var/log/**": "allow",
+      "opencode.json": "deny",
+      "opencode.jsonc": "deny"
+    },
+    "edit": {
+      "**/*": "allow",
+      "~/*": "deny",
+      "../**": "deny",
+      "/**": "deny",
+      "/tmp/**": "allow",
+      "opencode.json": "deny",
+      "opencode.jsonc": "deny"
+    },
+    "external_directory": {
+      "~/.config/opencode/**": "allow",
+      "/var/log/**": "allow",
+      "/tmp/**": "allow"
+    }
+  }
+}

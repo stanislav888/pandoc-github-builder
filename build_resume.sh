@@ -18,7 +18,6 @@ while IFS='=' read -r key value; do
 case "$key" in
         FILE_BASENAME) FILE_BASENAME="$value" ;;
         INPUT_FILE) INPUT_FILE="$value" ;;
-        HTML_TEMPLATE_FILE) HTML_TEMPLATE_FILE="$value" ;;
         RICH_TEMPLATE_FILE) RICH_TEMPLATE_FILE="$value" ;;
         SHOW_TOC) SHOW_TOC="$value" ;;
         DEFAULT_THEME) DEFAULT_THEME="$value" ;;
@@ -29,7 +28,6 @@ done < "$SETTINGS_FILE"
 
 INPUT_FILE="${INPUT_FILE:-./resume.md}"
 FILE_BASENAME="${FILE_BASENAME:-resume}"
-HTML_TEMPLATE_FILE="${HTML_TEMPLATE_FILE:-${SCRIPT_DIR}/pandoc-templates/simple.html}"
 RICH_TEMPLATE_FILE="${RICH_TEMPLATE_FILE:-${SCRIPT_DIR}/pandoc-templates/rich.html}"
 SHOW_TOC="${SHOW_TOC:-true}"
 DEFAULT_THEME="${DEFAULT_THEME:-yellow}"
@@ -68,26 +66,9 @@ if [ "$HAS_WKHTML" = false ]; then
 fi
 
 PDF_OUTPUT="${OUTPUT_FOLDER}/${FILE_BASENAME}.pdf"
-HTML_SIMPLE="${OUTPUT_FOLDER}/${FILE_BASENAME}_simple.html"
 HTML_RICH="${OUTPUT_FOLDER}/${FILE_BASENAME}_rich.html"
 ODT_OUTPUT="${OUTPUT_FOLDER}/${FILE_BASENAME}.odt"
 DOCX_OUTPUT="${OUTPUT_FOLDER}/${FILE_BASENAME}.docx"
-PREVIEW_HTML="/tmp/resume_rich.html"
-
-echo ""
-echo "--- Generating HTML (simple) ---"
-pandoc "$INPUT_FILE" \
-    -s \
-    --toc \
-    --toc-depth=3 \
-    --template="$HTML_TEMPLATE_FILE" \
-    --metadata title="$FILE_BASENAME" \
-    --metadata show_toc="$SHOW_TOC" \
-    --metadata default_theme="$DEFAULT_THEME" \
-    --embed-resources \
-    -o "$HTML_SIMPLE" \
-    -f "$INPUT_FORMAT"
-echo "  -> $HTML_SIMPLE"
 
 echo ""
 echo "--- Generating HTML (rich) ---"
@@ -98,25 +79,22 @@ pandoc "$INPUT_FILE" \
     --template="$RICH_TEMPLATE_FILE" \
     --metadata title="$FILE_BASENAME" \
     --metadata show_toc="$SHOW_TOC" \
-    --metadata default_theme="$DEFAULT_THEME" \
-    --embed-resources \
     -o "$HTML_RICH" \
     -f "$INPUT_FORMAT"
-cp "$HTML_RICH" "$PREVIEW_HTML"
 echo "  -> $HTML_RICH"
-echo "  -> $PREVIEW_HTML (preview)"
 
 if [ "$HAS_WKHTML" = true ]; then
     echo ""
     echo "--- Generating PDF ---"
     pandoc "$INPUT_FILE" \
+        -s \
         -t html \
         --pdf-engine=wkhtmltopdf \
-        --template="$HTML_TEMPLATE_FILE" \
+        --template="$RICH_TEMPLATE_FILE" \
         --metadata title="$FILE_BASENAME" \
         --metadata show_toc="$SHOW_TOC" \
-        --metadata default_theme="$DEFAULT_THEME" \
-        --embed-resources \
+        --toc \
+        --toc-depth=3 \
         -o "$PDF_OUTPUT" \
         -f "$INPUT_FORMAT"
     echo "  -> $PDF_OUTPUT"
@@ -128,10 +106,9 @@ fi
 echo ""
 echo "--- Generating ODT ---"
 pandoc "$INPUT_FILE" \
+    -s \
     -t odt \
     --template="$ODT_TEMPLATE_FILE" \
-    --metadata show_toc="$SHOW_TOC" \
-    --metadata default_theme="$DEFAULT_THEME" \
     -o "$ODT_OUTPUT" \
     -f "$INPUT_FORMAT"
 echo "  -> $ODT_OUTPUT"
@@ -139,9 +116,8 @@ echo "  -> $ODT_OUTPUT"
 echo ""
 echo "--- Generating DOCX ---"
 pandoc "$INPUT_FILE" \
+    -s \
     --template="$DOCX_TEMPLATE_FILE" \
-    --metadata show_toc="$SHOW_TOC" \
-    --metadata default_theme="$DEFAULT_THEME" \
     -o "$DOCX_OUTPUT" \
     -f "$INPUT_FORMAT"
 echo "  -> $DOCX_OUTPUT"
@@ -150,10 +126,9 @@ echo ""
 echo "=========================================="
 echo "  Build complete!"
 echo "=========================================="
-echo "  HTML Simple: $HTML_SIMPLE"
 echo "  HTML Rich:   $HTML_RICH"
 echo "  ODT:         $ODT_OUTPUT"
 echo "  DOCX:        $DOCX_OUTPUT"
 [ "$HAS_WKHTML" = true ] && echo "  PDF:         $PDF_OUTPUT" || echo "  PDF:         (skipped - wkhtmltopdf not available)"
-echo "  Preview:     $PREVIEW_HTML"
+echo "  Preview:     $HTML_RICH"
 echo "=========================================="

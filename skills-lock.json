@@ -1,11 +1,29 @@
 {
   "version": 1,
   "skills": {
+    "bash-defensive-patterns": {
+      "source": "wshobson/agents",
+      "sourceType": "github",
+      "skillPath": "plugins/shell-scripting/skills/bash-defensive-patterns/SKILL.md",
+      "computedHash": "9c63659b9130b214b75f84ec11ac715b647250ca8e0cde2357f4c578d43cfc24"
+    },
     "bootstrap": {
       "source": "mindrally/skills",
       "sourceType": "github",
       "skillPath": "bootstrap/SKILL.md",
       "computedHash": "99c121c1791cbbadcb16b0ff4d3928c08d402e999a6611d2cbece613d98e7e97"
+    },
+    "bootstrap-mobile": {
+      "source": "ae563/home-shop-list",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/bootstrap-mobile/SKILL.md",
+      "computedHash": "f8cde3bd51c9fe4bcb350705db317251ba365dd004345e159d9b7b814a6818a6"
+    },
+    "create-github-action-workflow-specification": {
+      "source": "github/awesome-copilot",
+      "sourceType": "github",
+      "skillPath": "skills/create-github-action-workflow-specification/SKILL.md",
+      "computedHash": "527e6c77d921d58a9d0059aa95d0d14b441d2166f9c20518263048a56ca8fbbb"
     },
     "pandoc": {
       "source": "plinde/claude-plugins",
