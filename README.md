@@ -1,6 +1,6 @@
 # Resume Builder – GitHub Actions CI/CD Pipeline
 
-Automated CI/CD pipeline that builds a professional resume from Markdown using Pandoc. Generates PDF, DOCX, ODT, and live HTML formats, with optional manual publishing to GitHub Releases and GitHub Pages.
+Automated CI/CD pipeline that builds a professional resume from Markdown using Pandoc. Generates PDF, DOCX, ODT, and live HTML formats, with optional manual publishing to GitHub Releases and GitHub Pages. Please check an example [https://stanislav888.github.io/pandoc-github-builder/Dmitry_Ivanov_C++_Software_Developer_resume_rich.html](https://stanislav888.github.io/pandoc-github-builder/Dmitry_Ivanov_C++_Software_Developer_resume_rich.html)
 
 ## 🚀 Quick Start
 
@@ -113,7 +113,9 @@ Resume (ODT):   https://stanislav888.github.io/pandoc-github-builder/Dmitry_Ivan
 
 ## 📝 Templates
 
-This project uses the **Pandoc template format**. 
+This project uses the **Pandoc template format**.
+
+Only the HTML template is considered production-ready. All other templates are closer to beta versions and still need refinement before they can be used as-is.
 
 | Template | Source | License |
 |----------|--------|---------|
@@ -121,6 +123,7 @@ This project uses the **Pandoc template format**.
 | `pdf.html` | Custom (AI‑generated) | MIT |
 | `default.opendocument` | Pandoc stock | GPL-2.0-or-later |
 | `default.ms` | Pandoc stock | GPL-2.0-or-later |
+
 
 ## License
 
