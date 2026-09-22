@@ -240,7 +240,7 @@ jobs:
   deploy-pages:
     name: Deploy to GitHub Pages
     runs-on: ubuntu-latest
-    needs: [setup-file-names, build]
+    needs: [setup-file-names, build, test]
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev'
     permissions:
       pages: write
@@ -273,9 +273,19 @@ jobs:
         uses: actions/deploy-pages@v5
 
       - name: Print Pages URL
+        env:
+          PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+          FILE_PDF: ${{ needs.setup-file-names.outputs.FILE_PDF }}
+          FILE_DOCX: ${{ needs.setup-file-names.outputs.FILE_DOCX }}
+          FILE_ODT: ${{ needs.setup-file-names.outputs.FILE_ODT }}
+          FILE_HTML_RICH: ${{ needs.setup-file-names.outputs.FILE_HTML_RICH }}
         run: |
           echo "=========================================="
           echo "  Resume is live!"
           echo "=========================================="
-          echo "  URL: ${{ steps.deployment.outputs.page_url }}"
+          echo "  Root URL:       ${PAGE_URL}"
+          echo "  Resume (HTML):  ${PAGE_URL}$(basename "${FILE_HTML_RICH}")"
+          echo "  Resume (PDF):   ${PAGE_URL}$(basename "${FILE_PDF}")"
+          echo "  Resume (DOCX):  ${PAGE_URL}$(basename "${FILE_DOCX}")"
+          echo "  Resume (ODT):   ${PAGE_URL}$(basename "${FILE_ODT}")"
           echo "=========================================="
