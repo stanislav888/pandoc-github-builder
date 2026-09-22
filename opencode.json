@@ -9,6 +9,7 @@
       "~/.ssh/config": "allow",
       "~/.config/opencode/**": "allow",
       "/var/log/**": "allow",
+      "/usr/share/pandoc": "allow",
       "opencode.json": "deny",
       "opencode.jsonc": "deny"
     },
