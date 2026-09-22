@@ -41,7 +41,7 @@ git push origin main
 ### 6. Download generated files
 
 - Go to **Actions** → **Build Resume** → select the latest run.
-- Under **Artifacts**, download `Resume`.
+- Under **Artifacts** (very bottom), download `Resume`.
 
 Any intermediate version can be downloaded from artifacts; no release required.
 
@@ -72,7 +72,8 @@ Without these settings, the `deploy-pages` job fails with `Get Pages site failed
 
 After this setup, the `deploy-pages` job publishes the contents of the `release/` folder to `https://<username>.github.io/<repository>/`. Every generated file becomes available at a direct URL formed as `<page-url>/<file-name>`, for example `https://<username>.github.io/<repository>/<file_basename>_rich.html`. The workflow log lists the root URL and the direct links to all the files.
 
-The log example
+A log example:
+
 ```log
 Root URL:       https://stanislav888.github.io/pandoc-github-builder/
 Resume (HTML):  https://stanislav888.github.io/pandoc-github-builder/Dmitry_Ivanov_C++_Software_Developer_resume_rich.html
