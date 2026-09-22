@@ -210,7 +210,7 @@ jobs:
       - name: Download built artifacts
         uses: actions/download-artifact@v4
         with:
-          name: Resume_archive
+          name: Resume
           path: ./release
 
       - name: Delete existing release (if any)
