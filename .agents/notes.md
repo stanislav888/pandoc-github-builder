@@ -45,11 +45,13 @@ These notes capture the implementation specifics so new sessions don't need to r
 - Reads all settings from `settings.env.txt` using `while IFS='=' read` loop
 - Lines starting with `#` are skipped during parsing
 - `SHOW_TOC` defaults to `true`, `DEFAULT_THEME` defaults to `yellow`
-- `--metadata show_toc` only for HTML and PDF — stock ODT/DOCX templates don't use `$show_toc$`
+- `--metadata show_toc` only for HTML — stock ODT/DOCX templates don't use `$show_toc$`
+- `--metadata show_toc` NOT used for PDF — PDF uses `pdf.html` which has no `$show_toc$` variable
+- PDF generation uses `$PDF_TEMPLATE_FILE` (`pdf.html`) instead of `rich.html` — static light theme, no JS theme switching, no toggles
 - `--metadata default_theme` NOT passed to pandoc — template CSS `:root` defines yellow as default; `DEFAULT_THEME` is read from settings.env.txt for CI validation only
 - `--embed-resources` NOT used — resources already embedded in template
-- `--toc --toc-depth=3` and `--metadata title` used ONLY for HTML and PDF
-- **NO `--toc`, NO `--metadata title`, NO `--metadata show_toc` for ODT and DOCX**
+- `--toc --toc-depth=3` only for HTML (PDF uses `pdf.html` without TOC flags)
+- **NO `--toc`, NO `--toc-depth=3` for PDF, ODT, or DOCX**
 - **NO `--metadata default_theme` — template CSS `:root` defines yellow as default
 
 ## settings.env.txt
@@ -57,16 +59,18 @@ These notes capture the implementation specifics so new sessions don't need to r
 FILE_BASENAME="..."
 INPUT_FILE="./resume.md"
 RICH_TEMPLATE_FILE="./pandoc-templates/rich.html"
-SHOW_TOC=true          # Only used for HTML and PDF
+SHOW_TOC=true          # Only used for HTML
 DEFAULT_THEME=yellow   # Only for CI validation, not passed to pandoc
 ODT_TEMPLATE_FILE="./pandoc-templates/default.opendocument"
 DOCX_TEMPLATE_FILE="./pandoc-templates/default.ms"
 ```
-- `SHOW_TOC` and `DEFAULT_THEME` only used by HTML/PDF generation
+- `SHOW_TOC` only used by HTML generation
+- PDF template (`pdf.html`) is hardcoded in `build_resume.sh`
 
 ## CI Pipeline (`.github/workflows/ci.yml`)
 - `setup-file-names` job: loads settings.env.txt via dotenv, extracts `SHOW_TOC`, `DEFAULT_THEME`, `RICH_TEMPLATE_FILE`, template paths, file basename
-- `build` job: calls `bash build_resume.sh ${OUTPUT_FOLDER}` which passes `--metadata show_toc` only to HTML and PDF commands, NOT to ODT/DOCX
+- `build` job: calls `bash build_resume.sh ${OUTPUT_FOLDER}` which passes `--metadata show_toc` only to HTML, NOT to ODT/DOCX/PDF
+- PDF uses `pdf.html` (hardcoded in `build_resume.sh`) — no `--metadata show_toc` passed
 - Uses `RICH_TEMPLATE_FILE` instead of `HTML_TEMPLATE_FILE`
 - No `FILE_HTML_SIMPLE` or `HTML_TEMPLATE_FILE` references
 - Tests matrix: PDF, DOCX, ODT, HTML (rich)
@@ -78,6 +82,15 @@ DOCX_TEMPLATE_FILE="./pandoc-templates/default.ms"
 - Mobile controls: `<div class="controls-mobile">` with `id="sidebarToggleBtnMobile"` and `[data-theme-btn-mobile]` buttons
 - Sidebar: `<div id="sidebar"><nav id="toc">$toc$</nav></div>`
 - Content: `<div id="content">$body$</div>`
+
+## PDF Template (`pdf.html`)
+- Separate from `rich.html` — used exclusively for PDF generation via `wkhtmltopdf`
+- Path hardcoded in `build_resume.sh` as `$SCRIPT_DIR/pandoc-templates/pdf.html`
+- Static `light` theme hardcoded (no CSS variables, no JS theme switching)
+- Green accent color (#1abc9c), clean sidebar + content layout
+- No toggle buttons, no JavaScript, no `data-theme` attribute
+- Template variables: `$title$`, `$toc$`, `$body$`
+- No `$show_toc$` or `$default_theme$` variables used
 
 ## Skills (manual loading — NOT auto-discovered)
 
@@ -99,7 +112,7 @@ Skills are in `.agents/skill-docs/`. These are the LLM's working copies. Not aut
 pandoc resume.md -s --toc --toc-depth=3 --template=pandoc-templates/rich.html --metadata title="..." --metadata show_toc=true -o output.html
 
 # PDF
-pandoc resume.md -s --toc --toc-depth=3 -t html --pdf-engine=wkhtmltopdf --template=pandoc-templates/rich.html --metadata title="..." --metadata show_toc=true -o output.pdf
+pandoc resume.md -s -t html --pdf-engine=wkhtmltopdf --template=pandoc-templates/pdf.html --metadata title="..." -o output.pdf
 
 # ODT
 pandoc resume.md -s -t odt --template=pandoc-templates/default.opendocument -o output.odt
@@ -114,4 +127,4 @@ Preview output is `${OUTPUT_FOLDER}/${FILE_BASENAME}_rich.html` (same as the ric
 - `--metadata default_theme` not needed — template CSS `:root` defines yellow as default
 - `--embed-resources` not needed — resources already embedded in template
 - `--metadata show_toc` only for HTML and PDF — stock ODT/DOCX templates don't use `$show_toc$`
-- `--toc --toc-depth=3` only for HTML and PDF
+- `--toc --toc-depth=3` only for HTML (PDF does not use TOC)

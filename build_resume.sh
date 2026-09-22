@@ -90,11 +90,8 @@ if [ "$HAS_WKHTML" = true ]; then
         -s \
         -t html \
         --pdf-engine=wkhtmltopdf \
-        --template="$RICH_TEMPLATE_FILE" \
+        --template="$SCRIPT_DIR/pandoc-templates/pdf.html" \
         --metadata title="$FILE_BASENAME" \
-        --metadata show_toc="$SHOW_TOC" \
-        --toc \
-        --toc-depth=3 \
         -o "$PDF_OUTPUT" \
         -f "$INPUT_FORMAT"
     echo "  -> $PDF_OUTPUT"
