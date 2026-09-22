@@ -76,6 +76,7 @@ pandoc "$INPUT_FILE" \
     -s \
     --toc \
     --toc-depth=3 \
+    --embed-resources \
     --template="$RICH_TEMPLATE_FILE" \
     --metadata title="$FILE_BASENAME" \
     --metadata show_toc="$SHOW_TOC" \
